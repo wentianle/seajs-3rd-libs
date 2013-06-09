@@ -1,0 +1,11 @@
+{
+    "family": "ucloud",
+    "name": "cache",
+    "version": "1.0.0",
+    "description": "cache",
+    "spm":{
+        "output": [
+            "cache.js"
+        ]
+    }
+}

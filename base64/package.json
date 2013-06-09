@@ -1,0 +1,13 @@
+{
+    "name": "base64",
+        "version": "1.0.1",
+        "family": "ucloud",
+        "description": "base64",
+        "spm":{
+            "alias":{
+            },
+            "output": [
+                "base64.js"
+                ]
+        }
+}
