@@ -14,13 +14,13 @@ define(function(require, exports, module) {
         require('./jquery-ui')($);
         require('./jquery-cookie')($);
 
+        require('./jquery-textrange')($);
+
         /**
          *  datetimepicker 插件加载 
          */
         require('./jquery-ui-slideraccess')($);
-        //require('./jquery-ui-timepicker-addon')($);
 
         require('./select2')($);
-        //$.validator.setDefaults({onkeyup:false});
     }
 });

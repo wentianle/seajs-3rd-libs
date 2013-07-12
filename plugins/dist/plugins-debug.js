@@ -1,4 +1,4 @@
-define("ucloud/plugins/1.2.9/plugins-debug", [ "./bootstrap-debug", "./jquery-metadata-debug", "./jquery-validate-debug", "./jquery-validate-password-debug", "./zxcvbn-validate-password-debug", "ucloud/zxcvbn/1.0.0/zxcvbn-debug", "./additional-methods-debug", "./iso8601-debug", "./jquery-autocomplete-debug", "./jquery-dateformat-debug", "./jquery-layout-debug", "./jquery-pager-debug", "./jquery-ui-debug", "./jquery-cookie-debug", "./jquery-ui-slideraccess-debug", "./select2-debug" ], function(require, exports, module) {
+define("ucloud/plugins/1.3.0/plugins-debug", [ "./bootstrap-debug", "./jquery-metadata-debug", "./jquery-validate-debug", "./jquery-validate-password-debug", "./zxcvbn-validate-password-debug", "ucloud/zxcvbn/1.0.0/zxcvbn-debug", "./additional-methods-debug", "./iso8601-debug", "./jquery-autocomplete-debug", "./jquery-dateformat-debug", "./jquery-layout-debug", "./jquery-pager-debug", "./jquery-ui-debug", "./jquery-cookie-debug", "./jquery-textrange-debug", "./jquery-ui-slideraccess-debug", "./select2-debug" ], function(require, exports, module) {
     return function($) {
         require("./bootstrap-debug")($);
         require("./jquery-metadata-debug")($);
@@ -13,16 +13,16 @@ define("ucloud/plugins/1.2.9/plugins-debug", [ "./bootstrap-debug", "./jquery-me
         require("./jquery-pager-debug")($);
         require("./jquery-ui-debug")($);
         require("./jquery-cookie-debug")($);
+        require("./jquery-textrange-debug")($);
         /**
          *  datetimepicker 插件加载 
          */
         require("./jquery-ui-slideraccess-debug")($);
-        //require('./jquery-ui-timepicker-addon')($);
         require("./select2-debug")($);
     };
 });
 
-define("ucloud/plugins/1.2.9/bootstrap-debug", [], function() {
+define("ucloud/plugins/1.3.0/bootstrap-debug", [], function() {
     return function($) {
         var jQuery = $;
         /* ===================================================
@@ -1276,7 +1276,7 @@ define("ucloud/plugins/1.2.9/bootstrap-debug", [], function() {
     };
 });
 
-define("ucloud/plugins/1.2.9/jquery-metadata-debug", [], function(require, exports, module) {
+define("ucloud/plugins/1.3.0/jquery-metadata-debug", [], function(require, exports, module) {
     return function($) {
         var jQuery = $;
         /*
@@ -1386,7 +1386,7 @@ define("ucloud/plugins/1.2.9/jquery-metadata-debug", [], function(require, expor
     };
 });
 
-define("ucloud/plugins/1.2.9/jquery-validate-debug", [], function(require, exports, module) {
+define("ucloud/plugins/1.3.0/jquery-validate-debug", [], function(require, exports, module) {
     return function(jQuery) {
         /**
          * jQuery Validation Plugin 1.10.0
@@ -2513,7 +2513,7 @@ define("ucloud/plugins/1.2.9/jquery-validate-debug", [], function(require, expor
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  */
-define("ucloud/plugins/1.2.9/jquery-validate-password-debug", [], function(require, exports, module) {
+define("ucloud/plugins/1.3.0/jquery-validate-password-debug", [], function(require, exports, module) {
     return function($) {
         var LOWER = /[a-z]/, UPPER = /[A-Z]/, DIGIT = /[0-9]/, DIGITS = /[0-9].*[0-9]/, SPECIAL = /[^a-zA-Z0-9]/, SAME = /^(.)\1+$/;
         function rating(rate, message) {
@@ -2557,7 +2557,7 @@ define("ucloud/plugins/1.2.9/jquery-validate-password-debug", [], function(requi
     };
 });
 
-define("ucloud/plugins/1.2.9/zxcvbn-validate-password-debug", [ "ucloud/zxcvbn/1.0.0/zxcvbn-debug" ], function(require, exports, module) {
+define("ucloud/plugins/1.3.0/zxcvbn-validate-password-debug", [ "ucloud/zxcvbn/1.0.0/zxcvbn-debug" ], function(require, exports, module) {
     var zxcvbn = require("ucloud/zxcvbn/1.0.0/zxcvbn-debug");
     return function($) {
         var word_map = [ "too-short", "very-weak", "weak", "good", "strong" ];
@@ -2622,7 +2622,7 @@ define("ucloud/plugins/1.2.9/zxcvbn-validate-password-debug", [ "ucloud/zxcvbn/1
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  */
-define("ucloud/plugins/1.2.9/additional-methods-debug", [], function() {
+define("ucloud/plugins/1.3.0/additional-methods-debug", [], function() {
     return function(jQuery) {
         var $ = jQuery;
         function stripHtml(value) {
@@ -3135,7 +3135,7 @@ define("ucloud/plugins/1.2.9/additional-methods-debug", [], function() {
  * © 2011 Colin Snover <http://zetafleet.com>
  * Released under MIT license.
  */
-define("ucloud/plugins/1.2.9/iso8601-debug", [], function(require, exports, module) {
+define("ucloud/plugins/1.3.0/iso8601-debug", [], function(require, exports, module) {
     var origParse = Date.parse, numericKeys = [ 1, 4, 5, 6, 7, 10, 11 ];
     Date.parse = function(date) {
         var timestamp, struct, minutesOffset = 0;
@@ -3165,7 +3165,7 @@ define("ucloud/plugins/1.2.9/iso8601-debug", [], function(require, exports, modu
     };
 });
 
-define("ucloud/plugins/1.2.9/jquery-autocomplete-debug", [], function(require, exports, module) {
+define("ucloud/plugins/1.3.0/jquery-autocomplete-debug", [], function(require, exports, module) {
     return function($) {
         /*
          * jQuery Autocomplete plugin 1.1
@@ -3868,7 +3868,7 @@ define("ucloud/plugins/1.2.9/jquery-autocomplete-debug", [], function(require, e
     };
 });
 
-define("ucloud/plugins/1.2.9/jquery-dateformat-debug", [], function(require, exports, module) {
+define("ucloud/plugins/1.3.0/jquery-dateformat-debug", [], function(require, exports, module) {
     return function($) {
         var jQuery = $;
         !function(jQuery) {
@@ -4178,7 +4178,7 @@ define("ucloud/plugins/1.2.9/jquery-dateformat-debug", [], function(require, exp
     };
 });
 
-define("ucloud/plugins/1.2.9/jquery-layout-debug", [], function() {
+define("ucloud/plugins/1.3.0/jquery-layout-debug", [], function() {
     return function($) {
         var jQuery = $;
         /*
@@ -6506,7 +6506,7 @@ define("ucloud/plugins/1.2.9/jquery-layout-debug", [], function() {
     };
 });
 
-define("ucloud/plugins/1.2.9/jquery-pager-debug", [], function() {
+define("ucloud/plugins/1.3.0/jquery-pager-debug", [], function() {
     return function($) {
         var jQuery = $;
         /*
@@ -6635,7 +6635,7 @@ define("ucloud/plugins/1.2.9/jquery-pager-debug", [], function() {
     };
 });
 
-define("ucloud/plugins/1.2.9/jquery-ui-debug", [], function() {
+define("ucloud/plugins/1.3.0/jquery-ui-debug", [], function() {
     return function($) {
         var jQuery = $;
         /*! jQuery UI - v1.10.2 - 2013-03-14
@@ -18596,7 +18596,7 @@ define("ucloud/plugins/1.2.9/jquery-ui-debug", [], function() {
     };
 });
 
-define("ucloud/plugins/1.2.9/jquery-cookie-debug", [], function(require, exports, module) {
+define("ucloud/plugins/1.3.0/jquery-cookie-debug", [], function(require, exports, module) {
     return function($) {
         /*!
          * jQuery Cookie Plugin v1.3.1
@@ -18665,6 +18665,176 @@ define("ucloud/plugins/1.2.9/jquery-cookie-debug", [], function(require, exports
     };
 });
 
+/**
+ * jquery-textrange
+ * A jQuery plugin for getting, setting and replacing the selected text in input fields and textareas.
+ * See the [wiki](https://github.com/dwieeb/jquery-textrange/wiki) for usage and examples.
+ *
+ * (c) 2013 Daniel Imhoff <dwieeb@gmail.com> - danielimhoff.com
+ */
+define("ucloud/plugins/1.3.0/jquery-textrange-debug", [], function(require, exports, module) {
+    return function($) {
+        var browserType, textrange = {
+            /**
+             * $().textrange() or $().textrange('get')
+             *
+             * Retrieves an object containing the start and end location of the text range, the length of the range and the
+             * substring of the range.
+             *
+             * @param (optional) property
+             * @return An object of properties including position, start, end, length, and text or a specific property.
+             */
+            get: function(property) {
+                return _textrange[browserType].get.apply(this, [ property ]);
+            },
+            /**
+         * $().textrange('set')
+         *
+         * Sets the selected text of an object by specifying the start and length of the selection.
+         *
+         * The start and length parameters are identical to PHP's substr() function with the following changes:
+         *  - excluding start will select all the text in the field.
+         *  - passing 0 for length will set the cursor at start. See $().textrange('setcursor')
+         *
+         * @param (optional) start
+         * @param (optional) length
+         *
+         * @see http://php.net/manual/en/function.substr.php
+         */
+            set: function(start, length) {
+                var s = parseInt(start), l = parseInt(length), e;
+                if (typeof start === "undefined") {
+                    s = 0;
+                } else if (start < 0) {
+                    s = this.val().length + s;
+                }
+                if (typeof length === "undefined") {
+                    e = this.val().length;
+                } else if (length >= 0) {
+                    e = s + l;
+                } else {
+                    e = this.val().length + l;
+                }
+                _textrange[browserType].set.apply(this, [ s, e ]);
+                return this;
+            },
+            /**
+     * $().textrange('setcursor')
+     *
+     * Sets the cursor at a position of the text field.
+     *
+     * @param position
+     */
+            setcursor: function(position) {
+                return this.textrange("set", position, 0);
+            },
+            /**
+     * $().textrange('replace')
+     * Replaces the selected text in the input field or textarea with text.
+     *
+     * @param text The text to replace the selection with.
+     */
+            replace: function(text) {
+                _textrange[browserType].replace.apply(this, [ text ]);
+                return this;
+            },
+            /**
+ * Alias for $().textrange('replace')
+ */
+            insert: function(text) {
+                return this.textrange("replace", text);
+            }
+        }, _textrange = {
+            xul: {
+                get: function(property) {
+                    this[0].focus();
+                    var props = {
+                        position: this[0].selectionStart,
+                        start: this[0].selectionStart,
+                        end: this[0].selectionEnd,
+                        length: this[0].selectionEnd - this[0].selectionStart,
+                        text: this.val().substring(this[0].selectionStart, this[0].selectionEnd)
+                    };
+                    return typeof property === "undefined" ? props : props[property];
+                },
+                set: function(start, end) {
+                    this[0].focus();
+                    this[0].selectionStart = start;
+                    this[0].selectionEnd = end;
+                },
+                replace: function(text) {
+                    this[0].focus();
+                    var start = this[0].selectionStart;
+                    this.val(this.val().substring(0, this[0].selectionStart) + text + this.val().substring(this[0].selectionEnd, this.val().length));
+                    this[0].selectionStart = start;
+                    this[0].selectionEnd = start + text.length;
+                }
+            },
+            msie: {
+                get: function(property) {
+                    this[0].focus();
+                    var range = document.selection.createRange();
+                    if (typeof range === "undefined") {
+                        return {
+                            position: 0,
+                            start: 0,
+                            end: this[0].val().length,
+                            length: this[0].val().length,
+                            text: this.val()
+                        };
+                    }
+                    var rangetext = this[0].createTextRange();
+                    var rangetextcopy = rangetext.duplicate();
+                    rangetext.moveToBookmark(range.getBookmark());
+                    rangetextcopy.setEndPoint("EndToStart", rangetext);
+                    return {
+                        position: rangetextcopy.text.length,
+                        start: rangetextcopy.text.length,
+                        end: rangetextcopy.text.length + range.text.length,
+                        length: range.text.length,
+                        text: range.text
+                    };
+                },
+                set: function(start, end) {
+                    this[0].focus();
+                    var range = this[0].createTextRange();
+                    if (typeof range === "undefined") {
+                        return this;
+                    }
+                    if (typeof start !== "undefined") {
+                        range.moveStart("character", start);
+                        range.collapse();
+                    }
+                    if (typeof end !== "undefined") {
+                        range.moveEnd("character", end - start);
+                    }
+                    range.select();
+                },
+                replace: function(text) {
+                    this[0].focus();
+                    document.selection.createRange().text = text;
+                }
+            }
+        };
+        $.fn.textrange = function(method) {
+            if (typeof browserType === "undefined") {
+                browserType = "selectionStart" in this[0] ? "xul" : document.selection ? "msie" : "unknown";
+            }
+            // I don't know how to support this browser. :c
+            if (browserType === "unknown") {
+                return this;
+            }
+            if (typeof method === "undefined" || typeof method !== "string") {
+                return textrange.get.apply(this);
+            } else if (typeof textrange[method] === "function") {
+                return textrange[method].apply(this, Array.prototype.slice.call(arguments, 1));
+            } else {
+                $.error("Method " + method + " does not exist in jQuery.textrange");
+            }
+        };
+    };
+});
+
 /*
  * jQuery UI Slider Access
  * By: Trent Richardson [http://trentrichardson.com]
@@ -18677,7 +18847,7 @@ define("ucloud/plugins/1.2.9/jquery-cookie-debug", [], function(require, exports
  * http://trentrichardson.com/Impromptu/MIT-LICENSE.txt
  * 
  */
-define("ucloud/plugins/1.2.9/jquery-ui-slideraccess-debug", [], function() {
+define("ucloud/plugins/1.3.0/jquery-ui-slideraccess-debug", [], function() {
     return function($) {
         $.fn.extend({
             sliderAccess: function(options) {
@@ -18752,7 +18922,7 @@ define("ucloud/plugins/1.2.9/jquery-ui-slideraccess-debug", [], function() {
  distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and limitations under the License.
  */
-define("ucloud/plugins/1.2.9/select2-debug", [], function() {
+define("ucloud/plugins/1.3.0/select2-debug", [], function() {
     return function($) {
         var jQuery = $;
         (function($) {
