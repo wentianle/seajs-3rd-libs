@@ -1,0 +1,27 @@
+{
+  "family": "ucloud",
+  "name": "backgrid",
+  "version": "0.2.6",
+  "description": "The best project ever.",
+  "homepage": "https://github.com/wentianle/seajs-3rd-libs",
+  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/wentianle/seajs-3rd-libs.git"
+  },
+  "bugs": {
+    "url": ""
+  },
+  "keywords": ["widget"],
+  "licenses": "MIT",
+  "spm": {
+    "output": ["backgrid.js"],
+    "alias": {
+        "backbone": "gallery/backbone/1.0.0/backbone",
+        "underscore": "gallery/underscore/1.4.4/underscore",
+        "jquery": "ucloud/jquery/1.8.2/jquery"
+    },
+    "devAlias": {},
+    "engines": {}
+  }
+}
