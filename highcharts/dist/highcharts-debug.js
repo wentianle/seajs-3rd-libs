@@ -9,7 +9,7 @@
  */
 // JSLint options:
 /*global Highcharts, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console, each, grep */
-define("ucloud/highcharts/3.0.2/highcharts-debug", [ "ucloud/jquery/1.8.2/jquery-debug" ], function(require, exports, module) {
+define("ucloud/highcharts/3.0.3/highcharts-debug", [ "ucloud/jquery/1.8.2/jquery-debug" ], function(require, exports, module) {
     var jQuery = require("ucloud/jquery/1.8.2/jquery-debug");
     // encapsulated variables
     var UNDEFINED, doc = document, win = window, math = Math, mathRound = math.round, mathFloor = math.floor, mathCeil = math.ceil, mathMax = math.max, mathMin = math.min, mathAbs = math.abs, mathCos = math.cos, mathSin = math.sin, mathPI = math.PI, deg2rad = mathPI * 2 / 360, // some variables
@@ -1065,7 +1065,7 @@ define("ucloud/highcharts/3.0.2/highcharts-debug", [ "ucloud/jquery/1.8.2/jquery
                 $(el).stop();
             }
         };
-    })(win.jQuery);
+    })(jQuery);
     // check for a custom HighchartsAdapter defined prior to this file
     var globalAdapter = win.HighchartsAdapter, adapter = globalAdapter || {};
     // Initialize the adapter

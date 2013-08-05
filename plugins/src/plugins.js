@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
     return function($) {
-        require('./bootstrap')($);
+        //require('./bootstrap')($);
         require('./jquery-metadata')($);
         require('./jquery-validate')($);
         require('./jquery-validate-password')($);
@@ -13,8 +13,6 @@ define(function(require, exports, module) {
         require('./jquery-pager')($);
         require('./jquery-ui')($);
         require('./jquery-cookie')($);
-
-        require('./jquery-textrange')($);
 
         /**
          *  datetimepicker 插件加载 

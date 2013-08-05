@@ -1,30 +1,17 @@
 {
+    "family": "ucloud",
     "name": "marionette",
-    "version": "0.9.3",
-    "root": "gallery",
+    "version": "1.0.4",
     "description": "",
-    "homepage": "",
-    "author": "",
-    "repository": {
-        "type": "git",
-        "url": ""
-    },
-    "bugs": {
-        "url": ""
-    },
     "license": "MIT",
-    "dependencies": {
-        "jquery": "gallery/jquery/1.8.2/jquery",
-        "backbone": "gallery/backbone/0.9.2/backbone",
-        "underscore": "gallery/underscore/1.4.2/underscore"
-    },
-    "tests": ["marionette"],
-    "output": {
-        "marionette.js": "."
-    },
-    "spmConfig": {
-        "build": {
-            "to": "../../sea-modules/{{root}}/{{name}}/{{version}}"
-        }
+    "spm": {
+        "output": ["backgrid.js"],
+        "alias": {
+            "backbone": "gallery/backbone/1.0.0/backbone",
+            "underscore": "gallery/underscore/1.4.4/underscore",
+            "jquery": "ucloud/jquery/1.8.2/jquery"
+        },
+        "devAlias": {},
+        "engines": {}
     }
 }

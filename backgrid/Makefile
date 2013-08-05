@@ -1,36 +1,29 @@
-THEME = $(HOME)/.spm/themes/arale
+PROJECT_NAME = backgrid
 
-build-doc:
-	@nico build -C $(THEME)/nico.js
+JS_FILES = src2/preamble.js\
+	src2/formatter.js \
+	src2/cell.js \
+	src2/column.js \
+	src2/row.js \
+	src2/header.js \
+	src2/body.js \
+	src2/footer.js \
+	src2/grid.js \
+	src2/extensions/select-all/backgrid-select-all.js \
+	src2/extensions/filter/backgrid-filter.js \
+	src2/extensions/paginator/backgrid-paginator.js \
+	src2/extensions/text-cell/backgrid-text-cell.js 
+	
+JS_OUTFILE = $(PROJECT_NAME).js
 
-publish-doc: clean build-doc
-	@spm publish --doc _site -s spmjs
+all: js build
 
-server:
-	@nico server -C $(THEME)/nico.js
+js:
+	printf "define(function(require, exports, module){ \n var Backbone = require(\"backbone\"); \n var _ = require(\"underscore\"); \n var $$ = require(\"jquery\");\n \"use strict\";\n" > src/$(JS_OUTFILE);
+	cat $(JS_FILES)  >> src/$(JS_OUTFILE); 
+	printf "module.exports = Backgrid; \n\n});" >> src/$(JS_OUTFILE);
+	#cp src/$(JS_OUTFILE) ~/uwebsite/static/js/ucloud/sea-modules/ucloud/backgrid/0.2.6/backgrid-debug.js
 
-watch:
-	@nico server -C $(THEME)/nico.js --watch
-
-clean:
-	@rm -fr _site
-
-
-runner = _site/tests/runner.html
-test-src:
-	@mocha-browser ${runner} -S
-
-test-dist:
-	@mocha-browser ${runner}?dist -S
-
-test: test-src test-dist
-
-output = _site/coverage.html
-coverage: build-doc
-	@rm -fr _site/src-cov
-	@jscoverage --encoding=utf8 src _site/src-cov
-	@mocha-browser ${runner}?cov -S -R html-cov > ${output}
-	@echo "Build coverage to ${output}"
-
-
-.PHONY: build-doc publish-doc server clean test coverage
+build:
+	@spm build
+	@cp dist/* ~/uwebsite/static/js/ucloud/sea-modules/ucloud/backgrid/0.2.6

@@ -1,10 +1,3 @@
-/*!
-  backgrid
-  http://github.com/wyuenho/backgrid
-
-  Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors <wyuenho@gmail.com>
-  Licensed under the MIT license.
-*/
 define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbone-debug", "gallery/underscore/1.4.4/underscore-debug", "$-debug", "ucloud/jquery/1.8.2/jquery-debug" ], function(require, exports, module) {
     var Backbone = require("gallery/backbone/1.0.0/backbone-debug");
     var _ = require("gallery/underscore/1.4.4/underscore-debug");
@@ -15,7 +8,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
   http://github.com/wyuenho/backgrid
 
   Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
-  Licensed under the MIT license.
+  Licensed under the MIT @license.
 */
     // Copyright 2009, 2010 Kristopher Michael Kowal
     // https://github.com/kriskowal/es5-shim
@@ -34,6 +27,9 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
             return String(this).replace(trimBeginRegexp, "").replace(trimEndRegexp, "");
         };
     }
+    function capitalize(s) {
+        return String.fromCharCode(s.charCodeAt(0) - 32) + s.slice(1);
+    }
     function lpad(str, length, padstr) {
         var paddingLen = length - (str + "").length;
         paddingLen = paddingLen < 0 ? 0 : paddingLen;
@@ -43,8 +39,8 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
         }
         return padding + str;
     }
-    var Backgrid = root.Backgrid = {
-        VERSION: "0.3.0",
+    var Backgrid = {
+        VERSION: "0.2.6",
         Extension: {},
         requireOptions: function(options, requireOptionKeys) {
             for (var i = 0; i < requireOptionKeys.length; i++) {
@@ -57,7 +53,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
         resolveNameToClass: function(name, suffix) {
             if (_.isString(name)) {
                 var key = _.map(name.split("-"), function(e) {
-                    return e.slice(0, 1).toUpperCase() + e.slice(1);
+                    return capitalize(e);
                 }).join("") + suffix;
                 var klass = Backgrid[key] || Backgrid.Extension[key];
                 if (_.isUndefined(klass)) {
@@ -66,13 +62,6 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
                 return klass;
             }
             return name;
-        },
-        callByNeed: function() {
-            var value = arguments[0];
-            if (!_.isFunction(value)) return value;
-            var context = arguments[1];
-            var args = [].slice.call(arguments, 2);
-            return value.apply(context, !!(args + "") ? args : void 0);
         }
     };
     _.extend(Backgrid, Backbone.Events);
@@ -90,7 +79,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
     var Command = Backgrid.Command = function(evt) {
         _.extend(this, {
             altKey: !!evt.altKey,
-            "char": evt["char"],
+            "char": evt.char,
             charCode: evt.charCode,
             ctrlKey: !!evt.ctrlKey,
             key: evt.key,
@@ -166,7 +155,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
   http://github.com/wyuenho/backgrid
 
   Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
-  Licensed under the MIT license.
+  Licensed under the MIT @license.
 */
     /**
    Just a convenient class for interested parties to subclass.
@@ -190,8 +179,8 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
      @param {*} rawData
      @return {*}
   */
-        fromRaw: function(rawData) {
-            return rawData;
+        fromRaw: function(model, name) {
+            return model.get("name");
         },
         /**
      Takes a formatted string, usually from user input, and returns a
@@ -209,8 +198,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
         }
     });
     /**
-   A floating point number formatter. Doesn't understand scientific notation at
-   the moment.
+   A floating point number formatter. Doesn't understand notation at the moment.
 
    @class Backgrid.NumberFormatter
    @extends Backgrid.CellFormatter
@@ -272,10 +260,8 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
      a number.
   */
         toRaw: function(formattedData) {
-            formattedData = formattedData.trim();
-            if (formattedData === "") return null;
             var rawData = "";
-            var thousands = formattedData.split(this.orderSeparator);
+            var thousands = formattedData.trim().split(this.orderSeparator);
             for (var i = 0; i < thousands.length; i++) {
                 rawData += thousands[i];
             }
@@ -336,7 +322,6 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
         TIME_RE: /^(\d{2}):(\d{2}):(\d{2})(\.(\d{3}))?$/,
         ISO_SPLITTER_RE: /T|Z| +/,
         _convert: function(data, validate) {
-            if ((data + "").trim() === "") return null;
             var date, time = null;
             if (_.isNumber(data)) {
                 var jsDate = new Date(data);
@@ -422,7 +407,8 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
      @param {*} rawValue
      @return {string}
    */
-        fromRaw: function(rawValue) {
+        fromRaw: function(model, column) {
+            var rawValue = model.get(column.get("name"));
             if (_.isUndefined(rawValue) || _.isNull(rawValue)) return "";
             return rawValue + "";
         }
@@ -479,7 +465,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
   http://github.com/wyuenho/backgrid
 
   Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
-  Licensed under the MIT license.
+  Licensed under the MIT @license.
 */
     /**
    Generic cell editor base class. Only defines an initializer for a number of
@@ -563,7 +549,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
      exists.
   */
         render: function() {
-            this.$el.val(this.formatter.fromRaw(this.model.get(this.column.get("name"))));
+            this.$el.val(this.formatter.fromRaw(this.model, this.column));
             return this;
         },
         /**
@@ -597,8 +583,12 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
                 if (_.isUndefined(newValue)) {
                     model.trigger("backgrid:error", model, column, val);
                 } else {
-                    model.set(column.get("name"), newValue);
-                    model.trigger("backgrid:edited", model, column, command);
+                    // model.set(column.get("name"), newValue);
+                    if (column.get("editCommandHandler")) {
+                        column.get("editCommandHandler")(model, column, command, val);
+                    } else {
+                        model.trigger("backgrid:edited", model, column, command);
+                    }
                 }
             } else if (command.cancel()) {
                 // undo
@@ -664,24 +654,12 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
             if (!(this.column instanceof Column)) {
                 this.column = new Column(this.column);
             }
-            var column = this.column, model = this.model, $el = this.$el;
-            this.formatter = Backgrid.resolveNameToClass(column.get("formatter") || this.formatter, "Formatter");
+            this.formatter = Backgrid.resolveNameToClass(this.column.get("formatter") || this.formatter, "Formatter");
             this.editor = Backgrid.resolveNameToClass(this.editor, "CellEditor");
-            this.listenTo(model, "change:" + column.get("name"), function() {
-                if (!$el.hasClass("editor")) this.render();
+            this.listenTo(this.model, "change:" + this.column.get("name"), function() {
+                if (!this.$el.hasClass("editor")) this.render();
             });
-            this.listenTo(model, "backgrid:error", this.renderError);
-            this.listenTo(column, "change:editable change:sortable change:renderable", function(column) {
-                var changed = column.changedAttributes();
-                for (var key in changed) {
-                    if (changed.hasOwnProperty(key)) {
-                        $el.toggleClass(key, changed[key]);
-                    }
-                }
-            });
-            if (column.get("editable")) $el.addClass("editable");
-            if (column.get("sortable")) $el.addClass("sortable");
-            if (column.get("renderable")) $el.addClass("renderable");
+            this.listenTo(this.model, "backgrid:error", this.renderError);
         },
         /**
      Render a text string in a table cell. The text is converted from the
@@ -689,8 +667,11 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
   */
         render: function() {
             this.$el.empty();
-            this.$el.text(this.formatter.fromRaw(this.model.get(this.column.get("name"))));
+            this.$el.html(this.formatter.fromRaw(this.model, this.column));
             this.delegateEvents();
+            if (this.column.get("editable")) {
+                this.$el.addClass("editable");
+            }
             return this;
         },
         /**
@@ -715,8 +696,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
         enterEditMode: function() {
             var model = this.model;
             var column = this.column;
-            var editable = Backgrid.callByNeed(column.editable(), column, model);
-            if (editable) {
+            if (column.get("editable")) {
                 this.currentEditor = new this.editor({
                     column: this.column,
                     model: this.model,
@@ -758,7 +738,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
   */
         remove: function() {
             if (this.currentEditor) {
-                this.currentEditor.remove.apply(this.currentEditor, arguments);
+                this.currentEditor.remove.apply(this, arguments);
                 delete this.currentEditor;
             }
             return Backbone.View.prototype.remove.apply(this, arguments);
@@ -789,30 +769,14 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
     var UriCell = Backgrid.UriCell = Cell.extend({
         /** @property */
         className: "uri-cell",
-        /**
-     @property {string} [title] The title attribute of the generated anchor. It
-     uses the display value formatted by the `formatter.fromRaw` by default.
-  */
-        title: null,
-        /**
-     @property {string} [target="_blank"] The target attribute of the generated
-     anchor.
-  */
-        target: "_blank",
-        initialize: function(options) {
-            Cell.prototype.initialize.apply(this, arguments);
-            this.title = options.title || this.title;
-            this.target = options.target || this.target;
-        },
         render: function() {
             this.$el.empty();
-            var rawValue = this.model.get(this.column.get("name"));
-            var formattedValue = this.formatter.fromRaw(rawValue);
+            var formattedValue = this.formatter.fromRaw(this.model.get(this.column.get("name")));
             this.$el.append($("<a>", {
                 tabIndex: -1,
-                href: rawValue,
-                title: this.title || formattedValue,
-                target: this.target
+                href: formattedValue,
+                title: formattedValue,
+                target: "_blank"
             }).text(formattedValue));
             this.delegateEvents();
             return this;
@@ -871,13 +835,11 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
   */
         initialize: function(options) {
             Cell.prototype.initialize.apply(this, arguments);
-            if (!this.formatter.fromRaw && !this.formatter.toRaw) {
-                this.formatter = new this.formatter({
-                    decimals: this.decimals,
-                    decimalSeparator: this.decimalSeparator,
-                    orderSeparator: this.orderSeparator
-                });
-            }
+            this.formatter = new this.formatter({
+                decimals: this.decimals,
+                decimalSeparator: this.decimalSeparator,
+                orderSeparator: this.orderSeparator
+            });
         }
     });
     /**
@@ -936,13 +898,11 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
   */
         initialize: function(options) {
             Cell.prototype.initialize.apply(this, arguments);
-            if (!this.formatter.fromRaw && !this.formatter.toRaw) {
-                this.formatter = new this.formatter({
-                    includeDate: this.includeDate,
-                    includeTime: this.includeTime,
-                    includeMilli: this.includeMilli
-                });
-            }
+            this.formatter = new this.formatter({
+                includeDate: this.includeDate,
+                includeTime: this.includeTime,
+                includeMilli: this.includeMilli
+            });
             var placeholder = this.includeDate ? "YYYY-MM-DD" : "";
             placeholder += this.includeDate && this.includeTime ? "T" : "";
             placeholder += this.includeTime ? "HH:mm:ss" : "";
@@ -1130,7 +1090,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
             this.$el.empty();
             var optionValues = _.result(this, "optionValues");
             var selectedValues = this.formatter.fromRaw(this.model.get(this.column.get("name")));
-            if (!_.isArray(optionValues)) throw new TypeError("optionValues must be an array");
+            if (!_.isArray(optionValues)) throw TypeError("optionValues must be an array");
             var optionValue = null;
             var optionText = null;
             var optionValue = null;
@@ -1154,7 +1114,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
                     optgroup.append(this._renderOptions(optionValue.values, selectedValues));
                     this.$el.append(optgroup);
                 } else {
-                    throw new TypeError("optionValues elements must be a name-value pair or an object hash of { name: 'optgroup label', value: [option name-value pairs] }");
+                    throw TypeError("optionValues elements must be a name-value pair or an object hash of { name: 'optgroup label', value: [option name-value pairs] }");
                 }
             }
             this.delegateEvents();
@@ -1293,7 +1253,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
                 this.$el.append(selectedText.join(this.delimiter));
             } catch (ex) {
                 if (ex instanceof TypeError) {
-                    throw new TypeError("'optionValues' must be of type {Array.<Array>|Array.<{name: string, values: Array.<Array>}>}");
+                    throw TypeError("'optionValues' must be of type {Array.<Array>|Array.<{name: string, values: Array.<Array>}>}");
                 }
                 throw ex;
             }
@@ -1306,7 +1266,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
   http://github.com/wyuenho/backgrid
 
   Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
-  Licensed under the MIT license.
+  Licensed under the MIT @license.
 */
     /**
    A Column is a placeholder for column metadata.
@@ -1317,67 +1277,8 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
 
    @class Backgrid.Column
    @extends Backbone.Model
-*/
+ */
     var Column = Backgrid.Column = Backbone.Model.extend({
-        /**
-     @cfg {Object} defaults Column defaults. To override any of these default
-     values, you can either change the prototype directly to override
-     Column.defaults globally or extend Column and supply the custom class to
-     Backgrid.Grid:
-
-         // Override Column defaults globally
-         Column.prototype.defaults.sortable = false;
-
-         // Override Column defaults locally
-         var MyColumn = Column.extend({
-           defaults: _.defaults({
-             editable: false
-           }, Column.prototype.defaults)
-         });
-
-         var grid = new Backgrid.Grid(columns: new Columns([{...}, {...}], {
-           model: MyColumn
-         }));
-
-     @cfg {string} [defaults.name] The default name of the model attribute.
-
-     @cfg {string} [defaults.label] The default label to show in the header.
-
-     @cfg {string|Backgrid.Cell} [defaults.cell] The default cell type. If this
-     is a string, the capitalized form will be used to look up a cell class in
-     Backbone, i.e.: string => StringCell. If a Cell subclass is supplied, it is
-     initialized with a hash of parameters. If a Cell instance is supplied, it
-     is used directly.
-
-     @cfg {string|Backgrid.HeaderCell} [defaults.headerCell] The default header
-     cell type.
-
-     @cfg {boolean|string} [defaults.sortable=true] Whether this column is
-     sortable. If the value is a string, a method will the same name will be
-     looked up from the column instance to determine whether the column should
-     be sortable. The method's signature must be `function (Backgrid.Column,
-     Backbone.Model): boolean`.
-
-     @cfg {boolean|string} [defaults.editable=true] Whether this column is
-     editable. If the value is a string, a method will the same name will be
-     looked up from the column instance to determine whether the column should
-     be editable. The method's signature must be `function (Backgrid.Column,
-     Backbone.Model): boolean`.
-
-     @cfg {boolean|string} [defaults.renderable=true] Whether this column is
-     renderable. If the value is a string, a method will the same name will be
-     looked up from the column instance to determine whether the column should
-     be renderable. The method's signature must be `function (Backrid.Column,
-     Backbone.Model): boolean`.
-
-     @cfg {Backgrid.CellFormatter | Object | string} [defaults.formatter] The
-     formatter to use to convert between raw model values and user input.
-
-     @cfg {(function(Backbone.Model, string): *) | string} [defaults.sortValue]
-     The function to use to extract a value from the model for comparison during
-     sorting. If this value is a string, a method with the same name will be
-     looked up from the column instance.
-  */
         defaults: {
             name: undefined,
             label: undefined,
@@ -1385,43 +1286,33 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
             editable: true,
             renderable: true,
             formatter: undefined,
-            sortValue: undefined,
             cell: undefined,
             headerCell: undefined
         },
         /**
      Initializes this Column instance.
 
-     @param {Object} attrs
-
-     @param {string} attrs.name The model attribute this column is responsible
-     for.
-
-     @param {string|Backgrid.Cell} attrs.cell The cell type to use to render
-     this column.
-
-     @param {string} [attrs.label]
-
-     @param {string|Backgrid.HeaderCell} [attrs.headerCell]
-
-     @param {boolean|string} [attrs.sortable=true]
-
-     @param {boolean|string} [attrs.editable=true]
-
-     @param {boolean|string} [attrs.renderable=true]
-
-     @param {Backgrid.CellFormatter | Object | string} [attrs.formatter]
-
-     @param {(function(Backbone.Model, string): *) | string} [attrs.sortValue]
+     @param {Object} attrs Column attributes.
+     @param {string} attrs.name The name of the model attribute.
+     @param {string|Backgrid.Cell} attrs.cell The cell type.
+     If this is a string, the capitalized form will be used to look up a
+     cell class in Backbone, i.e.: string => StringCell. If a Cell subclass
+     is supplied, it is initialized with a hash of parameters. If a Cell
+     instance is supplied, it is used directly.
+     @param {string|Backgrid.HeaderCell} [attrs.headerCell] The header cell type.
+     @param {string} [attrs.label] The label to show in the header.
+     @param {boolean} [attrs.sortable=true]
+     @param {boolean} [attrs.editable=true]
+     @param {boolean} [attrs.renderable=true]
+     @param {Backgrid.CellFormatter|Object|string} [attrs.formatter] The
+     formatter to use to convert between raw model values and user input.
 
      @throws {TypeError} If attrs.cell or attrs.options are not supplied.
-
-     @throws {ReferenceError} If formatter is a string but a formatter class of
+     @throws {ReferenceError} If attrs.cell is a string but a cell class of
      said name cannot be found in the Backgrid module.
 
      See:
 
-     - Backgrid.Column.defaults
      - Backgrid.Cell
      - Backgrid.CellFormatter
    */
@@ -1442,24 +1333,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
             }, {
                 silent: true
             });
-        },
-        /**
-     @return {function(Backbone.Model, string): *}
-   */
-        sortValue: function() {
-            var sortValue = this.get("sortValue");
-            if (_.isString(sortValue)) return this[sortValue]; else if (_.isFunction(sortValue)) return sortValue;
-            return function(model, colName) {
-                return model.get(colName);
-            };
         }
-    });
-    _.each([ "sortable", "renderable", "editable" ], function(key) {
-        Column.prototype[key] = function() {
-            var value = this.get(key);
-            if (_.isString(value)) return this[value];
-            return !!value;
-        };
     });
     /**
    A Backbone collection of Column instances.
@@ -1478,7 +1352,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
   http://github.com/wyuenho/backgrid
 
   Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
-  Licensed under the MIT license.
+  Licensed under the MIT @license.
 */
     /**
    Row is a simple container view that takes a model instance and a list of
@@ -1502,6 +1376,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
      @throws {TypeError} If options.columns or options.model is undefined.
   */
         initialize: function(options) {
+            this.grid = options.grid;
             Backgrid.requireOptions(options, this.requiredOptions);
             var columns = this.columns = options.columns;
             if (!(columns instanceof Backbone.Collection)) {
@@ -1511,10 +1386,19 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
             for (var i = 0; i < columns.length; i++) {
                 cells.push(this.makeCell(columns.at(i), options));
             }
+            this.listenTo(columns, "change:renderable", function(column, renderable) {
+                for (var i = 0; i < cells.length; i++) {
+                    var cell = cells[i];
+                    if (cell.column.get("name") == column.get("name")) {
+                        if (renderable) cell.$el.show(); else cell.$el.hide();
+                    }
+                }
+            });
             this.listenTo(columns, "add", function(column, columns) {
                 var i = columns.indexOf(column);
                 var cell = this.makeCell(column, options);
                 cells.splice(i, 0, cell);
+                if (!cell.column.get("renderable")) cell.$el.hide();
                 var $el = this.$el;
                 if (i === 0) {
                     $el.prepend(cell.render().$el);
@@ -1540,10 +1424,11 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
 
      @return {Backgrid.Cell}
   */
-        makeCell: function(column) {
+        makeCell: function(column, options) {
             return new (column.get("cell"))({
                 column: column,
-                model: this.model
+                model: this.model,
+                grid: this.grid
             });
         },
         /**
@@ -1553,7 +1438,9 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
             this.$el.empty();
             var fragment = document.createDocumentFragment();
             for (var i = 0; i < this.cells.length; i++) {
-                fragment.appendChild(this.cells[i].render().el);
+                var cell = this.cells[i];
+                fragment.appendChild(cell.render().el);
+                if (!cell.column.get("renderable")) cell.$el.hide();
             }
             this.el.appendChild(fragment);
             this.delegateEvents();
@@ -1614,7 +1501,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
   http://github.com/wyuenho/backgrid
 
   Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
-  Licensed under the MIT license.
+  Licensed under the MIT @license.
 */
     /**
    HeaderCell is a special cell class that renders a column header cell. If the
@@ -1651,18 +1538,6 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
                 this.column = new Column(this.column);
             }
             this.listenTo(this.collection, "backgrid:sort", this._resetCellDirection);
-            var column = this.column, $el = this.$el;
-            this.listenTo(column, "change:editable change:sortable change:renderable", function(column) {
-                var changed = column.changedAttributes();
-                for (var key in changed) {
-                    if (changed.hasOwnProperty(key)) {
-                        $el.toggleClass(key, changed[key]);
-                    }
-                }
-            });
-            if (column.get("editable")) $el.addClass("editable");
-            if (column.get("sortable")) $el.addClass("sortable");
-            if (column.get("renderable")) $el.addClass("renderable");
         },
         /**
      Gets or sets the direction of this cell. If called directly without
@@ -1686,9 +1561,9 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
 
      @private
    */
-        _resetCellDirection: function(columnToSort, direction, comparator, collection) {
+        _resetCellDirection: function(sortByColName, direction, comparator, collection) {
             if (collection == this.collection) {
-                if (columnToSort !== this.column) this.direction(null); else this.direction(direction);
+                if (sortByColName !== this.column.get("name")) this.direction(null); else this.direction(direction);
             }
         },
         /**
@@ -1698,17 +1573,33 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
    */
         onClick: function(e) {
             e.preventDefault();
-            function cycleSort(header, col) {
-                if (header.direction() === "ascending") header.sort(col, "descending"); else if (header.direction() === "descending") header.sort(col, null); else header.sort(col, "ascending");
-            }
-            function toggleSort(header, col) {
-                if (header.direction() === "ascending") header.sort(col, "descending"); else header.sort(col, "ascending");
-            }
-            var column = this.column;
-            var sortable = Backgrid.callByNeed(column.sortable(), column, this.model);
-            if (sortable) {
-                var sortType = column.get("sortType");
-                if (sortType === "toggle") toggleSort(this, column); else cycleSort(this, column);
+            var columnName = this.column.get("name");
+            if (this.column.get("sortable")) {
+                if (this.direction() === "ascending") {
+                    this.sort(columnName, "descending", function(left, right) {
+                        var leftVal = left.get(columnName);
+                        var rightVal = right.get(columnName);
+                        if (leftVal === rightVal) {
+                            return 0;
+                        } else if (leftVal > rightVal) {
+                            return -1;
+                        }
+                        return 1;
+                    });
+                } else if (this.direction() === "descending") {
+                    this.sort(columnName, null);
+                } else {
+                    this.sort(columnName, "ascending", function(left, right) {
+                        var leftVal = left.get(columnName);
+                        var rightVal = right.get(columnName);
+                        if (leftVal === rightVal) {
+                            return 0;
+                        } else if (leftVal < rightVal) {
+                            return -1;
+                        }
+                        return 1;
+                    });
+                }
             }
         },
         /**
@@ -1724,26 +1615,24 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
      and the current page will then be returned.
 
      Triggers a Backbone `backgrid:sort` event from the collection when done
-     with the column, direction, comparator and a reference to the collection.
+     with the column name, direction, comparator and a reference to the
+     collection.
 
-     @param {Backgrid.Column} column
+     @param {string} columnName
      @param {null|"ascending"|"descending"} direction
+     @param {function(*, *): number} [comparator]
 
      See [Backbone.Collection#comparator](http://backbonejs.org/#Collection-comparator)
   */
-        sort: function(column, direction) {
+        sort: function(columnName, direction, comparator) {
+            comparator = comparator || this._cidComparator;
             var collection = this.collection;
-            var order;
-            if (direction === "ascending") order = -1; else if (direction === "descending") order = 1; else order = null;
-            var comparator = this.makeComparator(column.get("name"), order, order ? column.sortValue() : function(model) {
-                return model.cid;
-            });
             if (Backbone.PageableCollection && collection instanceof Backbone.PageableCollection) {
-                collection.setSorting(order && column.get("name"), order, {
-                    sortValue: column.sortValue()
-                });
+                var order;
+                if (direction === "ascending") order = -1; else if (direction === "descending") order = 1; else order = null;
+                collection.setSorting(order ? columnName : null, order);
                 if (collection.mode == "client") {
-                    if (collection.fullCollection.comparator == null) {
+                    if (!collection.fullCollection.comparator) {
                         collection.fullCollection.comparator = comparator;
                     }
                     collection.fullCollection.sort();
@@ -1754,27 +1643,35 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
                 collection.comparator = comparator;
                 collection.sort();
             }
-            this.collection.trigger("backgrid:sort", column, direction, comparator, this.collection);
+            this.collection.trigger("backgrid:sort", columnName, direction, comparator, this.collection);
         },
-        makeComparator: function(attr, order, func) {
-            return function(left, right) {
-                // extract the values from the models
-                var l = func(left, attr), r = func(right, attr), t;
-                // if descending order, swap left and right
-                if (order === 1) t = l, l = r, r = t;
-                // compare as usual
-                if (l === r) return 0; else if (l < r) return -1;
-                return 1;
-            };
+        /**
+     Default comparator for Backbone.Collections. Sorts cids in ascending
+     order. The cids of the models are assumed to be in insertion order.
+
+     @private
+     @param {*} left
+     @param {*} right
+  */
+        _cidComparator: function(left, right) {
+            var lcid = left.cid, rcid = right.cid;
+            if (!_.isUndefined(lcid) && !_.isUndefined(rcid)) {
+                lcid = lcid.slice(1) * 1, rcid = rcid.slice(1) * 1;
+                if (lcid < rcid) return -1; else if (lcid > rcid) return 1;
+            }
+            return 0;
         },
         /**
      Renders a header cell with a sorter and a label.
    */
         render: function() {
+            var $label;
             this.$el.empty();
-            var $label = $("<a>").text(this.column.get("label"));
-            var sortable = Backgrid.callByNeed(this.column.sortable(), this.column, this.model);
-            if (sortable) $label.append("<b class='sort-caret'></b>");
+            if (this.column.get("sortable")) {
+                $label = $("<a>").text(this.column.get("label")).append("<b class='sort-caret'></b>");
+            } else {
+                $label = this.column.get("label");
+            }
             this.$el.append($label);
             this.delegateEvents();
             return this;
@@ -1807,7 +1704,8 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
             var headerCell = column.get("headerCell") || options.headerCell || HeaderCell;
             headerCell = new headerCell({
                 column: column,
-                collection: this.collection
+                collection: this.collection,
+                grid: options.grid
             });
             return headerCell;
         }
@@ -1840,7 +1738,8 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
             }
             this.row = new Backgrid.HeaderRow({
                 columns: this.columns,
-                collection: this.collection
+                collection: this.collection,
+                grid: options.grid
             });
         },
         /**
@@ -1866,7 +1765,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
   http://github.com/wyuenho/backgrid
 
   Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
-  Licensed under the MIT license.
+  Licensed under the MIT @license.
 */
     /**
    Body is the table body which contains the rows inside a table. Body is
@@ -1893,6 +1792,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
      See Backgrid.Row.
   */
         initialize: function(options) {
+            this.grid = options.grid;
             Backgrid.requireOptions(options, [ "columns", "collection" ]);
             this.columns = options.columns;
             if (!(this.columns instanceof Backbone.Collection)) {
@@ -1902,7 +1802,8 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
             this.rows = this.collection.map(function(model) {
                 var row = new this.row({
                     columns: this.columns,
-                    model: model
+                    model: model,
+                    grid: this.grid
                 });
                 return row;
             }, this);
@@ -1958,7 +1859,8 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
             }, options || {});
             var row = new this.row({
                 columns: this.columns,
-                model: model
+                model: model,
+                grid: this.grid
             });
             var index = collection.indexOf(model);
             this.rows.splice(index, 0, row);
@@ -2022,7 +1924,8 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
             this.rows = this.collection.map(function(model) {
                 var row = new this.row({
                     columns: this.columns,
-                    model: model
+                    model: model,
+                    grid: this.grid
                 });
                 return row;
             }, this);
@@ -2071,34 +1974,26 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
         moveToNextCell: function(model, column, command) {
             var i = this.collection.indexOf(model);
             var j = this.columns.indexOf(column);
-            var cell, renderable, editable;
-            this.rows[i].cells[j].exitEditMode();
             if (command.moveUp() || command.moveDown() || command.moveLeft() || command.moveRight() || command.save()) {
                 var l = this.columns.length;
                 var maxOffset = l * this.collection.length;
                 if (command.moveUp() || command.moveDown()) {
                     var row = this.rows[i + (command.moveUp() ? -1 : 1)];
-                    if (row) {
-                        cell = row.cells[j];
-                        if (Backgrid.callByNeed(cell.column.editable(), cell.column, model)) {
-                            cell.enterEditMode();
-                        }
-                    }
+                    if (row) row.cells[j].enterEditMode();
                 } else if (command.moveLeft() || command.moveRight()) {
                     var right = command.moveRight();
                     for (var offset = i * l + j + (right ? 1 : -1); offset >= 0 && offset < maxOffset; right ? offset++ : offset--) {
                         var m = ~~(offset / l);
                         var n = offset - m * l;
-                        cell = this.rows[m].cells[n];
-                        renderable = Backgrid.callByNeed(cell.column.renderable(), cell.column, cell.model);
-                        editable = Backgrid.callByNeed(cell.column.editable(), cell.column, model);
-                        if (renderable && editable) {
+                        var cell = this.rows[m].cells[n];
+                        if (cell.column.get("renderable") && cell.column.get("editable")) {
                             cell.enterEditMode();
                             break;
                         }
                     }
                 }
             }
+            this.rows[i].cells[j].exitEditMode();
         }
     });
     /*
@@ -2106,7 +2001,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
   http://github.com/wyuenho/backgrid
 
   Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
-  Licensed under the MIT license.
+  Licensed under the MIT @license.
 */
     /**
    A Footer is a generic class that only defines a default tag `tfoot` and
@@ -2123,6 +2018,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
      Initializer.
 
      @param {Object} options
+     @param {*} options.parent The parent view class of this footer.
      @param {Backbone.Collection.<Backgrid.Column>|Array.<Backgrid.Column>|Array.<Object>} options.columns
      Column metadata.
      @param {Backbone.Collection} options.collection
@@ -2142,7 +2038,7 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
   http://github.com/wyuenho/backgrid
 
   Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
-  Licensed under the MIT license.
+  Licensed under the MIT @license.
 */
     /**
    Grid represents a data grid that has a header, body and an optional footer.
@@ -2222,6 +2118,10 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
             }
             this.columns = options.columns;
             var passedThruOptions = _.omit(options, [ "el", "id", "attributes", "className", "tagName", "events" ]);
+            // passed grid ref
+            passedThruOptions = _.extend(passedThruOptions, {
+                grid: this
+            });
             this.header = options.header || this.header;
             this.header = new this.header(passedThruOptions);
             this.body = options.body || this.body;
@@ -2310,5 +2210,694 @@ define("ucloud/backgrid/0.2.6/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
             return Backbone.View.prototype.remove.apply(this, arguments);
         }
     });
+    /*
+  backgrid-select-all
+  http://github.com/wyuenho/backgrid
+
+  Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
+  Licensed under the MIT @license.
+*/
+    /**
+     Renders a checkbox for row selection.
+
+     @class Backgrid.Extension.SelectRowCell
+     @extends Backbone.View
+  */
+    var SelectRowCell = Backgrid.Extension.SelectRowCell = Backbone.View.extend({
+        /** @property */
+        className: "select-row-cell",
+        /** @property */
+        tagName: "td",
+        /** @property */
+        events: {
+            "keydown :checkbox": "onKeydown",
+            "change :checkbox": "onChange",
+            "click :checkbox": "enterEditMode"
+        },
+        /**
+       Initializer. If the underlying model triggers a `select` event, this cell
+       will change its checked value according to the event's `selected` value.
+
+       @param {Object} options
+       @param {Backgrid.Column} options.column
+       @param {Backbone.Model} options.model
+    */
+        initialize: function(options) {
+            this.grid = options.grid;
+            Backgrid.requireOptions(options, [ "model", "column" ]);
+            this.column = options.column;
+            if (!(this.column instanceof Backgrid.Column)) {
+                this.column = new Backgrid.Column(this.column);
+            }
+            this.listenTo(this.model, "backgrid:select", function(model, selected) {
+                this.$el.find(":checkbox").prop("checked", selected).change();
+            });
+        },
+        /**
+       Focuses the checkbox.
+    */
+        enterEditMode: function() {
+            this.$el.find(":checkbox").focus();
+        },
+        /**
+       Unfocuses the checkbox.
+    */
+        exitEditMode: function() {
+            this.$el.find(":checkbox").blur();
+        },
+        /**
+       Process keyboard navigation.
+    */
+        onKeydown: function(e) {
+            var command = new Backgrid.Command(e);
+            if (command.passThru()) return true;
+            // skip ahead to `change`
+            if (command.cancel()) {
+                e.stopPropagation();
+                this.$el.find(":checkbox").blur();
+            } else if (command.save() || command.moveLeft() || command.moveRight() || command.moveUp() || command.moveDown()) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.model.trigger("backgrid:edited", this.model, this.column, command);
+            }
+        },
+        /**
+       When the checkbox's value changes, this method will trigger a Backbone
+       `backgrid:selected` event with a reference of the model and the
+       checkbox's `checked` value.
+    */
+        onChange: function(e) {
+            this.model.trigger("backgrid:selected", this.model, $(e.target).prop("checked"));
+            this.grid.trigger("backgrid:selectedrowschanged");
+        },
+        /**
+       Renders a checkbox in a table cell.
+    */
+        render: function() {
+            this.$el.empty().append('<input tabindex="-1" type="checkbox" />');
+            this.delegateEvents();
+            return this;
+        }
+    });
+    /**
+     Renders a checkbox to select all rows on the current page.
+
+     @class Backgrid.Extension.SelectAllHeaderCell
+     @extends Backgrid.Extension.SelectRowCell
+  */
+    var SelectAllHeaderCell = Backgrid.Extension.SelectAllHeaderCell = SelectRowCell.extend({
+        /** @property */
+        className: "select-all-header-cell",
+        /** @property */
+        tagName: "th",
+        /**
+       Initializer. When this cell's checkbox is checked, a Backbone
+       `backgrid:select` event will be triggered for each model for the current
+       page in the underlying collection. If a `SelectRowCell` instance exists
+       for the rows representing the models, they will check themselves. If any
+       of the SelectRowCell instances trigger a Backbone `backgrid:selected`
+       event with a `false` value, this cell will uncheck its checkbox. In the
+       event of a Backbone `backgrid:refresh` event, which is triggered when the
+       body refreshes its rows, which can happen under a number of conditions
+       such as paging or the columns were reset, this cell will still remember
+       the previously selected models and trigger a Backbone `backgrid:select`
+       event on them such that the SelectRowCells can recheck themselves upon
+       refreshing.
+
+       @param {Object} options
+       @param {Backgrid.Column} options.column
+       @param {Backbone.Collection} options.collection
+    */
+        initialize: function(options) {
+            this.grid = options.grid;
+            Backgrid.requireOptions(options, [ "column", "collection" ]);
+            this.column = options.column;
+            if (!(this.column instanceof Backgrid.Column)) {
+                this.column = new Backgrid.Column(this.column);
+            }
+            var collection = this.collection;
+            var selectedModels = this.selectedModels = {};
+            this.listenTo(collection, "backgrid:selected", function(model, selected) {
+                if (selected) selectedModels[model.id || model.cid] = model; else {
+                    delete selectedModels[model.id || model.cid];
+                    this.$el.find(":checkbox").prop("checked", false);
+                }
+            });
+            this.listenTo(collection, "remove", function(model) {
+                delete selectedModels[model.cid];
+            });
+            this.listenTo(collection, "backgrid:refresh", function() {
+                this.$el.find(":checkbox").prop("checked", false);
+                for (var i = 0; i < collection.length; i++) {
+                    var model = collection.at(i);
+                    if (selectedModels[model.id || model.cid]) {
+                        model.trigger("backgrid:select", model, true);
+                    }
+                }
+            });
+        },
+        /**
+       Progagates the checked value of this checkbox to all the models of the
+       underlying collection by triggering a Backbone `backgrid:select` event on
+       the models themselves, passing each model and the current `checked` value
+       of the checkbox in each event.
+    */
+        onChange: function(e) {
+            var checked = $(e.target).prop("checked");
+            var collection = this.collection;
+            collection.each(function(model) {
+                model.trigger("backgrid:select", model, checked);
+            });
+            this.grid.trigger("backgrid:selectedrowschanged");
+        }
+    });
+    /**
+     Convenient method to retrieve a list of selected models. This method only
+     exists when the `SelectAll` extension has been included.
+
+     @member Backgrid.Grid
+     @return {Array.<Backbone.Model>}
+  */
+    Backgrid.Grid.prototype.getSelectedModels = function() {
+        var selectAllHeaderCell;
+        var headerCells = this.header.row.cells;
+        for (var i = 0, l = headerCells.length; i < l; i++) {
+            var headerCell = headerCells[i];
+            if (headerCell instanceof SelectAllHeaderCell) {
+                selectAllHeaderCell = headerCell;
+                break;
+            }
+        }
+        var result = [];
+        if (selectAllHeaderCell) {
+            for (var modelId in selectAllHeaderCell.selectedModels) {
+                result.push(this.collection.get(modelId));
+            }
+        }
+        return result;
+    };
+    /*
+  backgrid-filter
+  http://github.com/wyuenho/backgrid
+
+  Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
+  Licensed under the MIT @license.
+*/
+    (function($, _, Backbone, Backgrid, lunr) {
+        "use strict";
+        /**
+     ServerSideFilter is a search form widget that submits a query to the server
+     for filtering the current collection.
+
+     @class Backgrid.Extension.ServerSideFilter
+  */
+        var ServerSideFilter = Backgrid.Extension.ServerSideFilter = Backbone.View.extend({
+            /** @property */
+            tagName: "form",
+            /** @property */
+            className: "backgrid-filter form-search",
+            /** @property {function(Object, ?Object=): string} template */
+            template: _.template('<div class="input-prepend input-append"><!--span class="add-on"><i class="icon-search"></i></span--><input type="text" <% if (placeholder) { %> placeholder="<%- placeholder %>" <% } %> name="<%- name %>" /><span class="add-on"><a class="close" href="#">&times;</a></span></div>'),
+            /** @property */
+            events: {
+                "click .close": "clear",
+                submit: "search"
+            },
+            /** @property {string} [name='q'] Query key */
+            name: "q",
+            /** @property The HTML5 placeholder to appear beneath the search box. */
+            placeholder: null,
+            /**
+       @param {Object} options
+       @param {Backbone.Collection} options.collection
+       @param {String} [options.name]
+       @param {String} [options.placeholder]
+    */
+            initialize: function(options) {
+                Backgrid.requireOptions(options, [ "collection" ]);
+                Backbone.View.prototype.initialize.apply(this, arguments);
+                this.name = options.name || this.name;
+                this.placeholder = options.placeholder || this.placeholder;
+                var collection = this.collection, self = this;
+                if (Backbone.PageableCollection && collection instanceof Backbone.PageableCollection && collection.mode == "server") {
+                    collection.queryParams[this.name] = function() {
+                        return self.$el.find("input[type=text]").val();
+                    };
+                }
+            },
+            /**
+       Upon search form submission, this event handler constructs a query
+       parameter object and pass it to Collection#fetch for server-side
+       filtering.
+    */
+            search: function(e) {
+                if (e) e.preventDefault();
+                var data = {};
+                data[this.name] = this.$el.find("input[type=text]").val();
+                this.collection.fetch({
+                    data: data
+                });
+            },
+            /**
+       Event handler for the close button. Clears the search box and refetch the
+       collection.
+    */
+            clear: function(e) {
+                if (e) e.preventDefault();
+                this.$("input[type=text]").val(null);
+                this.collection.fetch();
+            },
+            /**
+       Renders a search form with a text box, optionally with a placeholder and
+       a preset value if supplied during initialization.
+    */
+            render: function() {
+                this.$el.empty().append(this.template({
+                    name: this.name,
+                    placeholder: this.placeholder,
+                    value: this.value
+                }));
+                this.delegateEvents();
+                return this;
+            }
+        });
+        /**
+     ClientSideFilter is a search form widget that searches a collection for
+     model matches against a query on the client side. The exact matching
+     algorithm can be overriden by subclasses.
+
+     @class Backgrid.Extension.ClientSideFilter
+     @extends Backgrid.Extension.ServerSideFilter
+  */
+        var ClientSideFilter = Backgrid.Extension.ClientSideFilter = ServerSideFilter.extend({
+            /** @property */
+            events: {
+                "click .close": function(e) {
+                    e.preventDefault();
+                    this.clear();
+                },
+                "change input[type=text]": "search",
+                "keyup input[type=text]": "search",
+                submit: function(e) {
+                    e.preventDefault();
+                    this.search();
+                }
+            },
+            /**
+       @property {?Array.<string>} A list of model field names to search
+       for matches. If null, all of the fields will be searched.
+    */
+            fields: null,
+            /**
+       @property wait The time in milliseconds to wait since for since the last
+       change to the search box's value before searching. This value can be
+       adjusted depending on how often the search box is used and how large the
+       search index is.
+    */
+            wait: 149,
+            /**
+       Debounces the #search and #clear methods and makes a copy of the given
+       collection for searching.
+
+       @param {Object} options
+       @param {Backbone.Collection} options.collection
+       @param {String} [options.placeholder]
+       @param {String} [options.fields]
+       @param {String} [options.wait=149]
+    */
+            initialize: function(options) {
+                ServerSideFilter.prototype.initialize.apply(this, arguments);
+                this.fields = options.fields || this.fields;
+                this.wait = options.wait || this.wait;
+                this._debounceMethods([ "search", "clear" ]);
+                var collection = this.collection;
+                var shadowCollection = this.shadowCollection = collection.clone();
+                shadowCollection.url = collection.url;
+                shadowCollection.sync = collection.sync;
+                shadowCollection.parse = collection.parse;
+                this.listenTo(collection, "add", function(model, collection, options) {
+                    shadowCollection.add(model, options);
+                });
+                this.listenTo(collection, "remove", function(model, collection, options) {
+                    shadowCollection.remove(model, options);
+                });
+                this.listenTo(collection, "sort reset", function(collection, options) {
+                    options = _.extend({
+                        reindex: true
+                    }, options || {});
+                    if (options.reindex) shadowCollection.reset(collection.models);
+                });
+            },
+            _debounceMethods: function(methodNames) {
+                if (_.isString(methodNames)) methodNames = [ methodNames ];
+                this.undelegateEvents();
+                for (var i = 0, l = methodNames.length; i < l; i++) {
+                    var methodName = methodNames[i];
+                    var method = this[methodName];
+                    this[methodName] = _.debounce(method, this.wait);
+                }
+                this.delegateEvents();
+            },
+            /**
+       This default implementation takes a query string and returns a matcher
+       function that looks for matches in the model's #fields or all of its
+       fields if #fields is null, for any of the words in the query
+       case-insensitively.
+
+       Subclasses overriding this method must take care to conform to the
+       signature of the matcher function. In addition, when the matcher function
+       is called, its context will be bound to this ClientSideFilter object so
+       it has access to the filter's attributes and methods.
+
+       @param {string} query The search query in the search box.
+       @return {function(Backbone.Model):boolean} A matching function.
+    */
+            makeMatcher: function(query) {
+                //var regexp = new RegExp(query.trim().split(/\W/).join("|"), "i");
+                var regexp = new RegExp(query.trim(), "i");
+                return function(model) {
+                    var keys = this.fields || model.keys();
+                    for (var i = 0, l = keys.length; i < l; i++) {
+                        if (regexp.test(model.get(keys[i]).toString() + "")) return true;
+                    }
+                    return false;
+                };
+            },
+            /**
+       Takes the query from the search box, constructs a matcher with it and
+       loops through collection looking for matches. Reset the given collection
+       when all the matches have been found.
+    */
+            search: function() {
+                var matcher = _.bind(this.makeMatcher(this.$("input[type=text]").val()), this);
+                this.collection.reset(this.shadowCollection.filter(matcher), {
+                    reindex: false
+                });
+            },
+            /**
+       Clears the search box and reset the collection to its original.
+    */
+            clear: function() {
+                this.$("input[type=text]").val(null);
+                this.collection.reset(this.shadowCollection.models, {
+                    reindex: false
+                });
+            }
+        });
+    })(jQuery, _, Backbone, Backgrid, lunr);
+    /*
+  backgrid-paginator
+  http://github.com/wyuenho/backgrid
+
+  Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
+  Licensed under the MIT @license.
+*/
+    (function($, _, Backbone, Backgrid) {
+        "use strict";
+        /**
+     Paginator is a Backgrid extension that renders a series of configurable
+     pagination handles. This extension is best used for splitting a large data
+     set across multiple pages. If the number of pages is larger then a
+     threshold, which is set to 10 by default, the page handles are rendered
+     within a sliding window, plus the fast forward, fast backward, previous and
+     next page handles. The fast forward, fast backward, previous and next page
+     handles can be turned off.
+
+     @class Backgrid.Extension.Paginator
+  */
+        Backgrid.Extension.Paginator = Backbone.View.extend({
+            /** @property */
+            className: "backgrid-paginator",
+            /** @property */
+            windowSize: 10,
+            /**
+       @property {Object} fastForwardHandleLabels You can disable specific
+       handles by setting its value to `null`.
+    */
+            fastForwardHandleLabels: {
+                first: "《",
+                prev: "〈",
+                next: "〉",
+                last: "》"
+            },
+            /** @property */
+            template: _.template('<ul><% _.each(handles, function (handle) { %><li <% if (handle.className) { %>class="<%= handle.className %>"<% } %>><a href="#" <% if (handle.title) {%> title="<%= handle.title %>"<% } %>><%= handle.label %></a></li><% }); %></ul>'),
+            /** @property */
+            events: {
+                "click a": "changePage"
+            },
+            /**
+       Initializer.
+
+       @param {Object} options
+       @param {Backbone.Collection} options.collection
+       @param {boolean} [options.fastForwardHandleLabels] Whether to render fast forward buttons.
+    */
+            initialize: function(options) {
+                Backgrid.requireOptions(options, [ "collection" ]);
+                var collection = this.collection;
+                var fullCollection = collection.fullCollection;
+                if (fullCollection) {
+                    this.listenTo(fullCollection, "add", this.render);
+                    this.listenTo(fullCollection, "remove", this.render);
+                    this.listenTo(fullCollection, "reset", this.render);
+                } else {
+                    this.listenTo(collection, "add", this.render);
+                    this.listenTo(collection, "remove", this.render);
+                    this.listenTo(collection, "reset", this.render);
+                }
+            },
+            /**
+       jQuery event handler for the page handlers. Goes to the right page upon
+       clicking.
+
+       @param {Event} e
+     */
+            changePage: function(e) {
+                e.preventDefault();
+                var $li = $(e.target).parent();
+                if (!$li.hasClass("active") && !$li.hasClass("disabled")) {
+                    var label = $(e.target).text();
+                    var ffLabels = this.fastForwardHandleLabels;
+                    var collection = this.collection;
+                    if (ffLabels) {
+                        switch (label) {
+                          case ffLabels.first:
+                            collection.getFirstPage();
+                            return;
+
+                          case ffLabels.prev:
+                            collection.getPreviousPage();
+                            return;
+
+                          case ffLabels.next:
+                            collection.getNextPage();
+                            return;
+
+                          case ffLabels.last:
+                            collection.getLastPage();
+                            return;
+                        }
+                    }
+                    var state = collection.state;
+                    var pageIndex = +label;
+                    collection.getPage(state.firstPage === 0 ? pageIndex - 1 : pageIndex);
+                }
+            },
+            /**
+       Internal method to create a list of page handle objects for the template
+       to render them.
+
+       @return {Array.<Object>} an array of page handle objects hashes
+     */
+            makeHandles: function() {
+                var handles = [];
+                var collection = this.collection;
+                var state = collection.state;
+                // convert all indices to 0-based here
+                var firstPage = state.firstPage;
+                var lastPage = +state.lastPage;
+                lastPage = Math.max(0, firstPage ? lastPage - 1 : lastPage);
+                var currentPage = Math.max(state.currentPage, state.firstPage);
+                currentPage = firstPage ? currentPage - 1 : currentPage;
+                var windowStart = Math.floor(currentPage / this.windowSize) * this.windowSize;
+                var windowEnd = Math.min(lastPage + 1, windowStart + this.windowSize);
+                if (collection.mode !== "infinite") {
+                    for (var i = windowStart; i < windowEnd; i++) {
+                        handles.push({
+                            label: i + 1,
+                            title: "No. " + (i + 1),
+                            className: currentPage === i ? "active" : undefined
+                        });
+                    }
+                }
+                var ffLabels = this.fastForwardHandleLabels;
+                if (ffLabels) {
+                    if (ffLabels.prev) {
+                        handles.unshift({
+                            label: ffLabels.prev,
+                            className: collection.hasPrevious() ? void 0 : "disabled"
+                        });
+                    }
+                    if (ffLabels.first) {
+                        handles.unshift({
+                            label: ffLabels.first,
+                            className: collection.hasPrevious() ? void 0 : "disabled"
+                        });
+                    }
+                    if (ffLabels.next) {
+                        handles.push({
+                            label: ffLabels.next,
+                            className: collection.hasNext() ? void 0 : "disabled"
+                        });
+                    }
+                    if (ffLabels.last) {
+                        handles.push({
+                            label: ffLabels.last,
+                            className: collection.hasNext() ? void 0 : "disabled"
+                        });
+                    }
+                }
+                return handles;
+            },
+            /**
+       Render the paginator handles inside an unordered list.
+    */
+            render: function() {
+                this.$el.empty();
+                this.$el.append(this.template({
+                    handles: this.makeHandles()
+                }));
+                this.delegateEvents();
+                return this;
+            }
+        });
+    })(jQuery, _, Backbone, Backgrid);
+    /*
+  backgrid-text-cell
+  http://github.com/wyuenho/backgrid
+
+  Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
+  Licensed under the MIT @license.
+*/
+    (function(window, $, _, Backbone, Backgrid) {
+        /**
+     Renders a form with a text area and a save button in a modal dialog.
+
+     @class Backgrid.Extension.TextareaEditor
+     @extends Backgrid.CellEditor
+  */
+        var TextareaEditor = Backgrid.Extension.TextareaEditor = Backgrid.CellEditor.extend({
+            /** @property */
+            tagName: "div",
+            /** @property */
+            className: "modal hide fade",
+            /** @property {function(Object, ?Object=): string} template */
+            template: _.template('<form><div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h3><%- column.get("label") %></h3></div><div class="modal-body"><textarea cols="<%= cols %>" rows="<%= rows %>"><%- content %></textarea></div><div class="modal-footer"><input class="btn" type="submit" value="Save"/></div></form>'),
+            /** @property */
+            cols: 80,
+            /** @property */
+            rows: 10,
+            /** @property */
+            events: {
+                "keydown textarea": "clearError",
+                submit: "saveOrCancel",
+                hide: "saveOrCancel",
+                hidden: "close",
+                shown: "focus"
+            },
+            /**
+       @property {Object} modalOptions The options passed to Bootstrap's modal
+       plugin.
+    */
+            modalOptions: {
+                backdrop: false
+            },
+            /**
+       Renders a modal form dialog with a textarea, submit button and a close button.
+    */
+            render: function() {
+                this.$el.html($(this.template({
+                    column: this.column,
+                    cols: this.cols,
+                    rows: this.rows,
+                    content: this.formatter.fromRaw(this.model.get(this.column.get("name")))
+                })));
+                this.delegateEvents();
+                this.$el.modal(this.modalOptions);
+                return this;
+            },
+            /**
+       Event handler. Saves the text in the text area to the model when
+       submitting. When cancelling, if the text area is dirty, a confirmation
+       dialog will pop up. If the user clicks confirm, the text will be saved to
+       the model.
+
+       Triggers a Backbone `backgrid:error` event from the model along with the
+       model, column and the existing value as the parameters if the value
+       cannot be converted.
+
+       @param {Event} e
+    */
+            saveOrCancel: function(e) {
+                if (e && e.type == "submit") {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                var model = this.model;
+                var column = this.column;
+                var val = this.$el.find("textarea").val();
+                var newValue = this.formatter.toRaw(val);
+                if (_.isUndefined(newValue)) {
+                    model.trigger("backgrid:error", model, column, val);
+                    if (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                } else if (!e || e.type == "submit" || e.type == "hide" && newValue !== (this.model.get(this.column.get("name")) || "").replace(/\r/g, "") && window.confirm("Would you like to save your changes?")) {
+                    model.set(column.get("name"), newValue);
+                    this.$el.modal("hide");
+                } else if (e.type != "hide") this.$el.modal("hide");
+            },
+            /**
+       Clears the error class on the parent cell.
+     */
+            clearError: _.debounce(function() {
+                if (!_.isUndefined(this.formatter.toRaw(this.$el.find("textarea").val()))) {
+                    this.$el.parent().removeClass("error");
+                }
+            }, 150),
+            /**
+       Triggers a `backgrid:edited` event along with the cell editor as the
+       parameter after the modal is hidden.
+
+       @param {Event} e
+    */
+            close: function(e) {
+                var model = this.model;
+                model.trigger("backgrid:edited", model, this.column, new Backgrid.Command(e));
+            },
+            /**
+       Focuses the textarea when the modal is shown.
+    */
+            focus: function() {
+                this.$el.find("textarea").focus();
+            }
+        });
+        /**
+     TextCell is a string cell type that renders a form with a text area in a
+     modal dialog instead of an input box editor. It is best suited for entering
+     a large body of text.
+
+     @class Backgrid.Extension.TextCell
+     @extends Backgrid.StringCell
+  */
+        var TextCell = Backgrid.Extension.TextCell = Backgrid.StringCell.extend({
+            /** @property */
+            className: "text-cell",
+            /** @property  */
+            editor: TextareaEditor
+        });
+    })(window, jQuery, _, Backbone, Backgrid);
     module.exports = Backgrid;
 });
