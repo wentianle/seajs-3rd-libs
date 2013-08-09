@@ -91,8 +91,8 @@ var HeaderCell = Backgrid.HeaderCell = Backbone.View.extend({
 		if (this.column.get("sortable")) {
 			if (this.direction() === "ascending") {
 				this.sort(columnName, "descending", function(left, right) {
-					var leftVal = left.get(columnName);
-					var rightVal = right.get(columnName);
+					var leftVal = JSON.stringify(left.get(columnName));
+					var rightVal = JSON.stringify(right.get(columnName));
 					if (leftVal === rightVal) {
 						return 0;
 					}
@@ -107,8 +107,8 @@ var HeaderCell = Backgrid.HeaderCell = Backbone.View.extend({
 			}
 			else {
 				this.sort(columnName, "ascending", function(left, right) {
-					var leftVal = left.get(columnName);
-					var rightVal = right.get(columnName);
+					var leftVal = JSON.stringify(left.get(columnName));
+					var rightVal = JSON.stringify(right.get(columnName));
 					if (leftVal === rightVal) {
 						return 0;
 					}

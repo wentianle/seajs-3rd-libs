@@ -207,7 +207,7 @@ var ClientSideFilter = Backgrid.Extension.ClientSideFilter = ServerSideFilter.ex
 		return function(model) {
 			var keys = this.fields || model.keys();
 			for (var i = 0, l = keys.length; i < l; i++) {
-				if (regexp.test(model.get(keys[i]).toString() + "")) return true;
+				if (regexp.test(JSON.stringify(model.get(keys[i])) + "")) return true;
 			}
 			return false;
 		};

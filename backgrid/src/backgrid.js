@@ -1821,8 +1821,8 @@ var HeaderCell = Backgrid.HeaderCell = Backbone.View.extend({
 		if (this.column.get("sortable")) {
 			if (this.direction() === "ascending") {
 				this.sort(columnName, "descending", function(left, right) {
-					var leftVal = left.get(columnName);
-					var rightVal = right.get(columnName);
+					var leftVal = JSON.stringify(left.get(columnName));
+					var rightVal = JSON.stringify(right.get(columnName));
 					if (leftVal === rightVal) {
 						return 0;
 					}
@@ -1837,8 +1837,8 @@ var HeaderCell = Backgrid.HeaderCell = Backbone.View.extend({
 			}
 			else {
 				this.sort(columnName, "ascending", function(left, right) {
-					var leftVal = left.get(columnName);
-					var rightVal = right.get(columnName);
+					var leftVal = JSON.stringify(left.get(columnName));
+					var rightVal = JSON.stringify(right.get(columnName));
 					if (leftVal === rightVal) {
 						return 0;
 					}
@@ -2991,7 +2991,7 @@ var ClientSideFilter = Backgrid.Extension.ClientSideFilter = ServerSideFilter.ex
 		return function(model) {
 			var keys = this.fields || model.keys();
 			for (var i = 0, l = keys.length; i < l; i++) {
-				if (regexp.test(model.get(keys[i]).toString() + "")) return true;
+				if (regexp.test(JSON.stringify(model.get(keys[i])) + "")) return true;
 			}
 			return false;
 		};
