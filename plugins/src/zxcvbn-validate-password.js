@@ -28,11 +28,11 @@ define(function(require, exports, module) {
 
         passwordRating.messages = {
             "exclude-char": "密码不能包含 ",
-            "too-short": "弱:",
-            "very-weak": "弱:",
+            "too-short": "密码长度太短:",
+            "very-weak": "太弱:",
             "weak": "弱:",
-            "good": "",
-            "strong": ""
+            "good": "良好:",
+            "strong": "强:"
         }
 
         passwordRating.show_safe_meter = {
@@ -40,8 +40,8 @@ define(function(require, exports, module) {
             "too-short": "inline",
             "very-weak": "inline",
             "weak": "inline",
-            "good": "none",
-            "strong": "none"
+            "good": "inline",
+            "strong": "inline"
         }
 
         $.validator.addMethod("zxpassword", function(value, element, exclude_regx) {

@@ -654,6 +654,7 @@ var InputCellEditor = Backgrid.InputCellEditor = CellEditor.extend({
 			}
 			else {
 				// model.set(column.get("name"), newValue);
+
                 if (column.get("editCommandHandler")) {
                     column.get("editCommandHandler")(model, column, command, val);
                 }else{
@@ -752,6 +753,7 @@ var Cell = Backgrid.Cell = Backbone.View.extend({
 		this.$el.html(this.formatter.fromRaw(this.model, this.column));
 		this.delegateEvents();
 		if (this.column.get("editable")) {
+            this.$el.append('<i class="icon-pencil edit-tagname" style="float:right;"></i>');
             this.$el.addClass("editable");
         }
 		return this;
@@ -2788,100 +2790,97 @@ Backgrid.Grid.prototype.getSelectedModels = function() {
   Licensed under the MIT @license.
 */
 
-(function ($, _, Backbone, Backgrid, lunr) {
-
-  "use strict";
-
-  /**
+/**
      ServerSideFilter is a search form widget that submits a query to the server
      for filtering the current collection.
 
      @class Backgrid.Extension.ServerSideFilter
   */
-  var ServerSideFilter = Backgrid.Extension.ServerSideFilter = Backbone.View.extend({
+var ServerSideFilter = Backgrid.Extension.ServerSideFilter = Backbone.View.extend({
 
-    /** @property */
-    tagName: "form",
+	/** @property */
+	tagName: "form",
 
-    /** @property */
-    className: "backgrid-filter form-search",
+	/** @property */
+	className: "backgrid-filter form-search",
 
-    /** @property {function(Object, ?Object=): string} template */
-    template: _.template('<div class="input-prepend input-append"><!--span class="add-on"><i class="icon-search"></i></span--><input type="text" <% if (placeholder) { %> placeholder="<%- placeholder %>" <% } %> name="<%- name %>" /><span class="add-on"><a class="close" href="#">&times;</a></span></div>'),
+	/** @property {function(Object, ?Object=): string} template */
+	template: _.template('<div class="input-prepend input-append"><!--span class="add-on"><i class="icon-search"></i></span--><input type="text" <% if (placeholder) { %> placeholder="<%- placeholder %>" <% } %> name="<%- name %>" /><span class="add-on"><i class="icon-search"></i></span></div>'),
 
-    /** @property */
-    events: {
-      "click .close": "clear",
-      "submit": "search"
-    },
+	/** @property */
+	events: {
+		"click .close": "clear",
+		"submit": "search"
+	},
 
-    /** @property {string} [name='q'] Query key */
-    name: "q",
+	/** @property {string} [name='q'] Query key */
+	name: "q",
 
-    /** @property The HTML5 placeholder to appear beneath the search box. */
-    placeholder: null,
+	/** @property The HTML5 placeholder to appear beneath the search box. */
+	placeholder: null,
 
-    /**
+	/**
        @param {Object} options
        @param {Backbone.Collection} options.collection
        @param {String} [options.name]
        @param {String} [options.placeholder]
     */
-    initialize: function (options) {
-      Backgrid.requireOptions(options, ["collection"]);
-      Backbone.View.prototype.initialize.apply(this, arguments);
-      this.name = options.name || this.name;
-      this.placeholder = options.placeholder || this.placeholder;
+	initialize: function(options) {
+		Backgrid.requireOptions(options, ["collection"]);
+		Backbone.View.prototype.initialize.apply(this, arguments);
+		this.name = options.name || this.name;
+		this.placeholder = options.placeholder || this.placeholder;
 
-      var collection = this.collection, self = this;
-      if (Backbone.PageableCollection &&
-          collection instanceof Backbone.PageableCollection &&
-          collection.mode == "server") {
-        collection.queryParams[this.name] = function () {
-          return self.$el.find("input[type=text]").val();
-        };
-      }
-    },
+		var collection = this.collection,
+		self = this;
+		if (Backbone.PageableCollection && collection instanceof Backbone.PageableCollection && collection.mode == "server") {
+			collection.queryParams[this.name] = function() {
+				return self.$el.find("input[type=text]").val();
+			};
+		}
+	},
 
-    /**
+	/**
        Upon search form submission, this event handler constructs a query
        parameter object and pass it to Collection#fetch for server-side
        filtering.
     */
-    search: function (e) {
-      if (e) e.preventDefault();
-      var data = {};
-      data[this.name] = this.$el.find("input[type=text]").val();
-      this.collection.fetch({data: data});
-    },
+	search: function(e) {
+		if (e) e.preventDefault();
+		var data = {};
+		data[this.name] = this.$el.find("input[type=text]").val();
+		this.collection.fetch({
+			data: data
+		});
+	},
 
-    /**
+	/**
        Event handler for the close button. Clears the search box and refetch the
        collection.
     */
-    clear: function (e) {
-      if (e) e.preventDefault();
-      this.$("input[type=text]").val(null);
-      this.collection.fetch();
-    },
+	clear: function(e) {
+		if (e) e.preventDefault();
+		this.$("input[type=text]").val(null);
+		this.collection.fetch();
+	},
 
-    /**
+	/**
        Renders a search form with a text box, optionally with a placeholder and
        a preset value if supplied during initialization.
     */
-    render: function () {
-      this.$el.empty().append(this.template({
-        name: this.name,
-        placeholder: this.placeholder,
-        value: this.value
-      }));
-      this.delegateEvents();
-      return this;
-    }
+	render: function() {
+		this.$el.empty().append(this.template({
+			name: this.name,
+			placeholder: this.placeholder,
+			value: this.value
+		}));
+		this.delegateEvents();
+		return this;
+	}
 
-  });
+});
 
-  /**
+/**
      ClientSideFilter is a search form widget that searches a collection for
      model matches against a query on the client side. The exact matching
      algorithm can be overriden by subclasses.
@@ -2889,37 +2888,37 @@ Backgrid.Grid.prototype.getSelectedModels = function() {
      @class Backgrid.Extension.ClientSideFilter
      @extends Backgrid.Extension.ServerSideFilter
   */
-  var ClientSideFilter = Backgrid.Extension.ClientSideFilter = ServerSideFilter.extend({
+var ClientSideFilter = Backgrid.Extension.ClientSideFilter = ServerSideFilter.extend({
 
-    /** @property */
-    events: {
-      "click .close": function (e) {
-        e.preventDefault();
-        this.clear();
-      },
-      "change input[type=text]": "search",
-      "keyup input[type=text]": "search",
-      "submit": function (e) {
-        e.preventDefault();
-        this.search();
-      }
-    },
+	/** @property */
+	events: {
+		"click .close": function(e) {
+			e.preventDefault();
+			this.clear();
+		},
+		"change input[type=text]": "search",
+		"keyup input[type=text]": "search",
+		"submit": function(e) {
+			e.preventDefault();
+			this.search();
+		}
+	},
 
-    /**
+	/**
        @property {?Array.<string>} A list of model field names to search
        for matches. If null, all of the fields will be searched.
     */
-    fields: null,
+	fields: null,
 
-    /**
+	/**
        @property wait The time in milliseconds to wait since for since the last
        change to the search box's value before searching. This value can be
        adjusted depending on how often the search box is used and how large the
        search index is.
     */
-    wait: 149,
+	wait: 149,
 
-    /**
+	/**
        Debounces the #search and #clear methods and makes a copy of the given
        collection for searching.
 
@@ -2929,47 +2928,50 @@ Backgrid.Grid.prototype.getSelectedModels = function() {
        @param {String} [options.fields]
        @param {String} [options.wait=149]
     */
-    initialize: function (options) {
-      ServerSideFilter.prototype.initialize.apply(this, arguments);
+	initialize: function(options) {
+		ServerSideFilter.prototype.initialize.apply(this, arguments);
 
-      this.fields = options.fields || this.fields;
-      this.wait = options.wait || this.wait;
+		this.fields = options.fields || this.fields;
+		this.wait = options.wait || this.wait;
 
-      this._debounceMethods(["search", "clear"]);
+		this._debounceMethods(["search", "clear"]);
 
-      var collection = this.collection;
-      var shadowCollection = this.shadowCollection = collection.clone();
-      shadowCollection.url = collection.url;
-      shadowCollection.sync = collection.sync;
-      shadowCollection.parse = collection.parse;
+		var collection = this.collection;
+		var shadowCollection = this.shadowCollection = collection.clone();
+		shadowCollection.url = collection.url;
+		shadowCollection.sync = collection.sync;
+		shadowCollection.parse = collection.parse;
 
-      this.listenTo(collection, "add", function (model, collection, options) {
-        shadowCollection.add(model, options);
-      });
-      this.listenTo(collection, "remove", function (model, collection, options) {
-        shadowCollection.remove(model, options);
-      });
-      this.listenTo(collection, "sort reset", function (collection, options) {
-        options = _.extend({reindex: true}, options || {});
-        if (options.reindex) shadowCollection.reset(collection.models);
-      });
-    },
+		this.listenTo(collection, "add", function(model, collection, options) {
+			shadowCollection.add(model, options);
+		});
+		this.listenTo(collection, "remove", function(model, collection, options) {
+			shadowCollection.remove(model, options);
+		});
+		this.listenTo(collection, "sort reset", function(collection, options) {
+			options = _.extend({
+				reindex: true
+			},
+			options || {});
+			if (options.reindex) shadowCollection.reset(collection.models);
+		});
+	},
 
-    _debounceMethods: function (methodNames) {
-      if (_.isString(methodNames)) methodNames = [methodNames];
+	_debounceMethods: function(methodNames) {
+		if (_.isString(methodNames)) methodNames = [methodNames];
 
-      this.undelegateEvents();
+		this.undelegateEvents();
 
-      for (var i = 0, l = methodNames.length; i < l; i++) {
-        var methodName = methodNames[i];
-        var method = this[methodName];
-        this[methodName] = _.debounce(method, this.wait);
-      }
+		for (var i = 0, l = methodNames.length; i < l; i++) {
+			var methodName = methodNames[i];
+			var method = this[methodName];
+			this[methodName] = _.debounce(method, this.wait);
+		}
 
-      this.delegateEvents();
-    },
+		this.delegateEvents();
+	},
 
-    /**
+	/**
        This default implementation takes a query string and returns a matcher
        function that looks for matches in the model's #fields or all of its
        fields if #fields is null, for any of the words in the query
@@ -2983,39 +2985,42 @@ Backgrid.Grid.prototype.getSelectedModels = function() {
        @param {string} query The search query in the search box.
        @return {function(Backbone.Model):boolean} A matching function.
     */
-    makeMatcher: function (query) {
-      //var regexp = new RegExp(query.trim().split(/\W/).join("|"), "i");
-      var regexp = new RegExp(query.trim(), "i");
-      return function (model) {
-        var keys = this.fields || model.keys();
-        for (var i = 0, l = keys.length; i < l; i++) {
-          if (regexp.test(model.get(keys[i]).toString() + "")) return true;
-        }
-        return false;
-      };
-    },
+	makeMatcher: function(query) {
+		//var regexp = new RegExp(query.trim().split(/\W/).join("|"), "i");
+		var regexp = new RegExp(query.trim(), "i");
+		return function(model) {
+			var keys = this.fields || model.keys();
+			for (var i = 0, l = keys.length; i < l; i++) {
+				if (regexp.test(model.get(keys[i]).toString() + "")) return true;
+			}
+			return false;
+		};
+	},
 
-    /**
+	/**
        Takes the query from the search box, constructs a matcher with it and
        loops through collection looking for matches. Reset the given collection
        when all the matches have been found.
     */
-    search: function () {
-      var matcher = _.bind(this.makeMatcher(this.$("input[type=text]").val()), this);
-      this.collection.reset(this.shadowCollection.filter(matcher), {reindex: false});
-    },
+	search: function() {
+		var matcher = _.bind(this.makeMatcher(this.$("input[type=text]").val()), this);
+		this.collection.reset(this.shadowCollection.filter(matcher), {
+			reindex: false
+		});
+	},
 
-    /**
+	/**
        Clears the search box and reset the collection to its original.
     */
-    clear: function () {
-      this.$("input[type=text]").val(null);
-      this.collection.reset(this.shadowCollection.models, {reindex: false});
-    }
+	clear: function() {
+		this.$("input[type=text]").val(null);
+		this.collection.reset(this.shadowCollection.models, {
+			reindex: false
+		});
+	}
 
-  });
+});
 
-}(jQuery, _, Backbone, Backgrid, lunr));
 /*
   backgrid-paginator
   http://github.com/wyuenho/backgrid

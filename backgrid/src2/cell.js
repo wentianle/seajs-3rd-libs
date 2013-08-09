@@ -141,6 +141,7 @@ var InputCellEditor = Backgrid.InputCellEditor = CellEditor.extend({
 			}
 			else {
 				// model.set(column.get("name"), newValue);
+
                 if (column.get("editCommandHandler")) {
                     column.get("editCommandHandler")(model, column, command, val);
                 }else{
@@ -239,6 +240,7 @@ var Cell = Backgrid.Cell = Backbone.View.extend({
 		this.$el.html(this.formatter.fromRaw(this.model, this.column));
 		this.delegateEvents();
 		if (this.column.get("editable")) {
+            this.$el.append('<i class="icon-pencil edit-tagname" style="float:right;"></i>');
             this.$el.addClass("editable");
         }
 		return this;

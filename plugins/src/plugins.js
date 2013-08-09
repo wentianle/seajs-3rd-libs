@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
     return function($) {
-        //require('./bootstrap')($);
+        require('./bootstrap')($);
         require('./jquery-metadata')($);
         require('./jquery-validate')($);
         require('./jquery-validate-password')($);
