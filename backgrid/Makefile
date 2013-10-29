@@ -22,8 +22,7 @@ js:
 	printf "define(function(require, exports, module){ \n var Backbone = require(\"backbone\"); \n var _ = require(\"underscore\"); \n var $$ = require(\"jquery\");\n \"use strict\";\n" > src/$(JS_OUTFILE);
 	cat $(JS_FILES)  >> src/$(JS_OUTFILE); 
 	printf "module.exports = Backgrid; \n\n});" >> src/$(JS_OUTFILE);
-	#cp src/$(JS_OUTFILE) ~/uwebsite/static/js/ucloud/sea-modules/ucloud/backgrid/0.2.6/backgrid-debug.js
 
 build:
 	@spm build
-	@cp dist/* ~/uwebsite/static/js/ucloud/sea-modules/ucloud/backgrid/0.2.7
+	@cp dist/* ~/uwebsite/static/js/ucloud/sea-modules/ucloud/backgrid/0.2.8

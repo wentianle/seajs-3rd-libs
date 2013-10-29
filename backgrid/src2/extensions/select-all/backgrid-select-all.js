@@ -208,7 +208,9 @@ Backgrid.Grid.prototype.getSelectedModels = function() {
 	var result = [];
 	if (selectAllHeaderCell) {
 		for (var modelId in selectAllHeaderCell.selectedModels) {
-			result.push(this.collection.get(modelId));
+            if(this.collection.get(modelId)){
+                result.push(this.collection.get(modelId));
+            }
 		}
 	}
 	return result;

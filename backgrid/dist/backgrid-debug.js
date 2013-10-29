@@ -1,4 +1,4 @@
-define("ucloud/backgrid/0.2.7/backgrid-debug", [ "gallery/backbone/1.0.0/backbone-debug", "gallery/underscore/1.4.4/underscore-debug", "$-debug", "ucloud/jquery/1.8.2/jquery-debug" ], function(require, exports, module) {
+define("ucloud/backgrid/0.2.8/backgrid-debug", [ "gallery/backbone/1.0.0/backbone-debug", "gallery/underscore/1.4.4/underscore-debug", "$-debug", "ucloud/jquery/1.8.2/jquery-debug" ], function(require, exports, module) {
     var Backbone = require("gallery/backbone/1.0.0/backbone-debug");
     var _ = require("gallery/underscore/1.4.4/underscore-debug");
     var $ = require("ucloud/jquery/1.8.2/jquery-debug");
@@ -2392,7 +2392,9 @@ define("ucloud/backgrid/0.2.7/backgrid-debug", [ "gallery/backbone/1.0.0/backbon
         var result = [];
         if (selectAllHeaderCell) {
             for (var modelId in selectAllHeaderCell.selectedModels) {
-                result.push(this.collection.get(modelId));
+                if (this.collection.get(modelId)) {
+                    result.push(this.collection.get(modelId));
+                }
             }
         }
         return result;
