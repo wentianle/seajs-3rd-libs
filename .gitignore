@@ -7,5 +7,5 @@ core.*
 *.pyc
 *.bak
 *.out
-dest
+dist
 sea-modules
