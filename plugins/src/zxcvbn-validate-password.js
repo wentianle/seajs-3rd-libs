@@ -2,8 +2,8 @@ define(function(require, exports, module) {
     var zxcvbn = require('zxcvbn');
     return function($) {
         var word_map = [
-            "too-short",
-            "very-weak",
+            "weak",
+            "weak",
             "weak",
             "good",
             "strong"
@@ -28,9 +28,7 @@ define(function(require, exports, module) {
 
         passwordRating.messages = {
             "exclude-char": "密码不能包含 ",
-            "too-short": "密码长度太短:",
-            "very-weak": "太弱:",
-            "weak": "弱:",
+            "weak": "密码强度弱:",
             "good": "良好:",
             "strong": "强:"
         }

@@ -1,4 +1,4 @@
-define("ucloud/plugins/1.3.1/plugins-debug", [ "./bootstrap-debug", "./jquery-metadata-debug", "./jquery-validate-debug", "./jquery-validate-password-debug", "./zxcvbn-validate-password-debug", "ucloud/zxcvbn/1.0.0/zxcvbn-debug", "./additional-methods-debug", "./iso8601-debug", "./jquery-autocomplete-debug", "./jquery-dateformat-debug", "./jquery-layout-debug", "./jquery-pager-debug", "./jquery-ui-debug", "./jquery-cookie-debug", "./jquery-ui-slideraccess-debug", "./select2-debug" ], function(require, exports, module) {
+define("ucloud/plugins/1.3.3/plugins-debug", [ "./bootstrap-debug", "./jquery-metadata-debug", "./jquery-validate-debug", "./jquery-validate-password-debug", "./zxcvbn-validate-password-debug", "ucloud/zxcvbn/1.0.1/zxcvbn-debug", "./additional-methods-debug", "./iso8601-debug", "./jquery-autocomplete-debug", "./jquery-dateformat-debug", "./jquery-layout-debug", "./jquery-pager-debug", "./jquery-ui-debug", "./jquery-cookie-debug", "./jquery-ui-slideraccess-debug", "./select2-debug" ], function(require, exports, module) {
     return function($) {
         require("./bootstrap-debug")($);
         require("./jquery-metadata-debug")($);
@@ -21,7 +21,7 @@ define("ucloud/plugins/1.3.1/plugins-debug", [ "./bootstrap-debug", "./jquery-me
     };
 });
 
-define("ucloud/plugins/1.3.1/bootstrap-debug", [], function() {
+define("ucloud/plugins/1.3.3/bootstrap-debug", [], function() {
     return function($) {
         var jQuery = $;
         /* ===================================================
@@ -1275,7 +1275,7 @@ define("ucloud/plugins/1.3.1/bootstrap-debug", [], function() {
     };
 });
 
-define("ucloud/plugins/1.3.1/jquery-metadata-debug", [], function(require, exports, module) {
+define("ucloud/plugins/1.3.3/jquery-metadata-debug", [], function(require, exports, module) {
     return function($) {
         var jQuery = $;
         /*
@@ -1385,7 +1385,7 @@ define("ucloud/plugins/1.3.1/jquery-metadata-debug", [], function(require, expor
     };
 });
 
-define("ucloud/plugins/1.3.1/jquery-validate-debug", [], function(require, exports, module) {
+define("ucloud/plugins/1.3.3/jquery-validate-debug", [], function(require, exports, module) {
     return function(jQuery) {
         /**
          * jQuery Validation Plugin 1.10.0
@@ -2512,7 +2512,7 @@ define("ucloud/plugins/1.3.1/jquery-validate-debug", [], function(require, expor
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  */
-define("ucloud/plugins/1.3.1/jquery-validate-password-debug", [], function(require, exports, module) {
+define("ucloud/plugins/1.3.3/jquery-validate-password-debug", [], function(require, exports, module) {
     return function($) {
         var LOWER = /[a-z]/, UPPER = /[A-Z]/, DIGIT = /[0-9]/, DIGITS = /[0-9].*[0-9]/, SPECIAL = /[^a-zA-Z0-9]/, SAME = /^(.)\1+$/;
         function rating(rate, message) {
@@ -2556,10 +2556,10 @@ define("ucloud/plugins/1.3.1/jquery-validate-password-debug", [], function(requi
     };
 });
 
-define("ucloud/plugins/1.3.1/zxcvbn-validate-password-debug", [ "ucloud/zxcvbn/1.0.0/zxcvbn-debug" ], function(require, exports, module) {
-    var zxcvbn = require("ucloud/zxcvbn/1.0.0/zxcvbn-debug");
+define("ucloud/plugins/1.3.3/zxcvbn-validate-password-debug", [ "ucloud/zxcvbn/1.0.1/zxcvbn-debug" ], function(require, exports, module) {
+    var zxcvbn = require("ucloud/zxcvbn/1.0.1/zxcvbn-debug");
     return function($) {
-        var word_map = [ "too-short", "very-weak", "weak", "good", "strong" ];
+        var word_map = [ "weak", "weak", "weak", "good", "strong" ];
         function rating(rate, message) {
             return {
                 rate: rate,
@@ -2576,9 +2576,7 @@ define("ucloud/plugins/1.3.1/zxcvbn-validate-password-debug", [ "ucloud/zxcvbn/1
         };
         passwordRating.messages = {
             "exclude-char": "密码不能包含 ",
-            "too-short": "密码长度太短:",
-            "very-weak": "太弱:",
-            weak: "弱:",
+            weak: "密码强度弱:",
             good: "良好:",
             strong: "强:"
         };
@@ -2621,7 +2619,7 @@ define("ucloud/plugins/1.3.1/zxcvbn-validate-password-debug", [ "ucloud/zxcvbn/1
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  */
-define("ucloud/plugins/1.3.1/additional-methods-debug", [], function() {
+define("ucloud/plugins/1.3.3/additional-methods-debug", [], function() {
     return function(jQuery) {
         var $ = jQuery;
         function stripHtml(value) {
@@ -3134,7 +3132,7 @@ define("ucloud/plugins/1.3.1/additional-methods-debug", [], function() {
  * © 2011 Colin Snover <http://zetafleet.com>
  * Released under MIT license.
  */
-define("ucloud/plugins/1.3.1/iso8601-debug", [], function(require, exports, module) {
+define("ucloud/plugins/1.3.3/iso8601-debug", [], function(require, exports, module) {
     var origParse = Date.parse, numericKeys = [ 1, 4, 5, 6, 7, 10, 11 ];
     Date.parse = function(date) {
         var timestamp, struct, minutesOffset = 0;
@@ -3164,7 +3162,7 @@ define("ucloud/plugins/1.3.1/iso8601-debug", [], function(require, exports, modu
     };
 });
 
-define("ucloud/plugins/1.3.1/jquery-autocomplete-debug", [], function(require, exports, module) {
+define("ucloud/plugins/1.3.3/jquery-autocomplete-debug", [], function(require, exports, module) {
     return function($) {
         /*
          * jQuery Autocomplete plugin 1.1
@@ -3867,7 +3865,7 @@ define("ucloud/plugins/1.3.1/jquery-autocomplete-debug", [], function(require, e
     };
 });
 
-define("ucloud/plugins/1.3.1/jquery-dateformat-debug", [], function(require, exports, module) {
+define("ucloud/plugins/1.3.3/jquery-dateformat-debug", [], function(require, exports, module) {
     return function($) {
         var jQuery = $;
         !function(jQuery) {
@@ -4177,7 +4175,7 @@ define("ucloud/plugins/1.3.1/jquery-dateformat-debug", [], function(require, exp
     };
 });
 
-define("ucloud/plugins/1.3.1/jquery-layout-debug", [], function() {
+define("ucloud/plugins/1.3.3/jquery-layout-debug", [], function() {
     return function($) {
         var jQuery = $;
         /*
@@ -6505,7 +6503,7 @@ define("ucloud/plugins/1.3.1/jquery-layout-debug", [], function() {
     };
 });
 
-define("ucloud/plugins/1.3.1/jquery-pager-debug", [], function() {
+define("ucloud/plugins/1.3.3/jquery-pager-debug", [], function() {
     return function($) {
         var jQuery = $;
         /*
@@ -6634,7 +6632,7 @@ define("ucloud/plugins/1.3.1/jquery-pager-debug", [], function() {
     };
 });
 
-define("ucloud/plugins/1.3.1/jquery-ui-debug", [], function() {
+define("ucloud/plugins/1.3.3/jquery-ui-debug", [], function() {
     return function($) {
         var jQuery = $;
         /*! jQuery UI - v1.10.2 - 2013-03-14
@@ -18595,7 +18593,7 @@ define("ucloud/plugins/1.3.1/jquery-ui-debug", [], function() {
     };
 });
 
-define("ucloud/plugins/1.3.1/jquery-cookie-debug", [], function(require, exports, module) {
+define("ucloud/plugins/1.3.3/jquery-cookie-debug", [], function(require, exports, module) {
     return function($) {
         /*!
          * jQuery Cookie Plugin v1.3.1
@@ -18676,7 +18674,7 @@ define("ucloud/plugins/1.3.1/jquery-cookie-debug", [], function(require, exports
  * http://trentrichardson.com/Impromptu/MIT-LICENSE.txt
  * 
  */
-define("ucloud/plugins/1.3.1/jquery-ui-slideraccess-debug", [], function() {
+define("ucloud/plugins/1.3.3/jquery-ui-slideraccess-debug", [], function() {
     return function($) {
         $.fn.extend({
             sliderAccess: function(options) {
@@ -18751,7 +18749,7 @@ define("ucloud/plugins/1.3.1/jquery-ui-slideraccess-debug", [], function() {
  distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and limitations under the License.
  */
-define("ucloud/plugins/1.3.1/select2-debug", [], function() {
+define("ucloud/plugins/1.3.3/select2-debug", [], function() {
     return function($) {
         var jQuery = $;
         (function($) {
