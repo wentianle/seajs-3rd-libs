@@ -25,4 +25,5 @@ js:
 
 build:
 	@spm build
-	@cp dist/* ~/uwebsite/static/js/ucloud/sea-modules/ucloud/backgrid/0.2.8
+	@ mkdir -p ~/http/javascript/sea-modules/ucloud/backgrid/0.2.9 
+	@cp dist/* ~/http/javascript/sea-modules/ucloud/backgrid/0.2.9

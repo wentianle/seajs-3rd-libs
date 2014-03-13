@@ -750,12 +750,20 @@ var Cell = Backgrid.Cell = Backbone.View.extend({
   */
 	render: function() {
 		this.$el.empty();
-		this.$el.html(this.formatter.fromRaw(this.model, this.column));
-		this.delegateEvents();
+
 		if (this.column.get("editable")) {
-            this.$el.append('<i class="icon-pencil edit-tagname" style="float:right;"></i>');
+            this.$el.html("<span class='pull-left'>"+this.formatter.fromRaw(this.model, this.column)+"</span>");
+        }else{
+		    this.$el.html(this.formatter.fromRaw(this.model, this.column));
+        }
+
+		this.delegateEvents();
+
+		if (this.column.get("editable")) {
+            this.$el.append('<i class="icon-pencil edit-tagname pull-right"></i>');
             this.$el.addClass("editable");
         }
+
 		return this;
 	},
 
